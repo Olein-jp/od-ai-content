@@ -96,9 +96,110 @@ OD AI Content は、主に次のようなコアブロックを Markdown に変�
 
 ただし、使用しているテーマやプラグイン独自のブロックによっては、意図した形に変換されない可能性があります。そのような箇所は、管理画面の診断とプレビューで確認できます。
 
-サイトを開発する人向けには、独自ブロックの扱いを調整する方法も用意しています。装飾専用などの理由で出力しないことが決まっているブロックは「意図的な除外」として登録できます。また、HTML からの変換結果を確認済みのブロックは「検証済み」として登録し、注意の対象から外せます。
+ここから紹介する調整は、PHP を使う開発者向けの内容です。通常の投稿や固定ページでコアブロックを使っている場合は、必ず設定しなければならないものではありません。独自ブロックを使っていて、診断に「未検証のHTMLフォールバックで変換されたブロック」と表示されたときに検討する機能と考えるとわかりやすいでしょう。
 
-これは警告を一律に隠す機能ではありません。登録していない独自ブロックは「未検証の HTML フォールバック」として注意に残ります。テーマやブロックプラグインの更新で出力が変わることもあるため、登録したあとも、更新時にはプレビューを確認しておくと安心です。
+#### 独自ブロックコンバーター
+
+独自ブロックコンバーターは、サイトやプラグインが独自に用意したブロックを、どのような Markdown に変換するか決める仕組みです。
+
+たとえば、「おすすめ情報」をカードのように表示する `example/card` というブロックがあったとします。ブラウザー向けには、背景色や枠線、アイコンなどを含んだ HTML が出力されるかもしれません。しかし、Markdown 版に残したいのは、カードの見た目ではなく、見出し、説明文、リンクといった情報です。
+
+そのような場合は、`od_ai_content_block_markdown` フィルターを使って、特定のブロックだけ変換結果を指定できます。次の例ではクラスを作らず、カードの先頭に「おすすめ情報」という見出しを付け、カード内のブロックを OD AI Content の既定処理で変換しています。
+
+```php
+add_filter(
+	'od_ai_content_block_markdown',
+	static function ( $markdown, $block, $converter ) {
+		if (
+			! isset( $block['blockName'] )
+			|| 'example/card' !== $block['blockName']
+		) {
+			return $markdown;
+		}
+
+		$inner_blocks = isset( $block['innerBlocks'] )
+			&& is_array( $block['innerBlocks'] )
+			? $block['innerBlocks']
+			: array();
+
+		return "## おすすめ情報\n\n"
+			. $converter->convert_blocks( $inner_blocks );
+	},
+	10,
+	3
+);
+```
+
+カードの中に説明文とリンクが入っていれば、生成結果は次のような形になります。
+
+```markdown
+## おすすめ情報
+
+初めて利用する方へ、サービスの特徴をまとめました。
+
+[サービスについて詳しく見る](https://example.com/service/)
+```
+
+`$block` には、現在変換しているブロックの情報が渡されます。ブロック名が `example/card` ではない場合は、最初に受け取った `$markdown` をそのまま返し、OD AI Content の通常の変換処理へ任せます。
+
+対象のカードでは、変換後の Markdown を文字列として返します。例のように `$converter->convert_blocks()` を使うと、カード内の段落やリンクなどを、OD AI Content の変換処理へ任せられます。
+
+このフィルターは既定のブロック変換より先に実行されます。フィルター内の PHP に誤りがあると Markdown の生成に失敗する可能性があるため、まずはテスト環境で診断とプレビューを確認してください。コードは OD AI Content 本体を直接編集せず、サイト専用のプラグインなどへ追加します。プラグイン本体を編集すると、アップデート時に変更が消えてしまうためです。
+
+#### 意図的な除外と検証済み HTML フォールバック
+
+HTML フォールバックとは、専用の変換処理がないブロックをいったん表示用の HTML にし、その内容を Markdown へ変換する予備の仕組みです。
+
+独自ブロックの扱いを調整する方法には、「意図的な除外」と「検証済み HTML フォールバック」もあります。名前は少し難しく見えますが、違いは次のように考えるとわかりやすいです。
+
+- 意図的な除外: そのブロックを Markdown に出力しない
+- 検証済み HTML フォールバック: HTML から変換した Markdown を残し、確認済みとして扱う
+
+たとえば、`example/decorative-banner` が背景画像と短い飾り文だけを表示するブロックで、記事本文として残す必要がないとします。この場合は、次のように「意図的な除外」へ登録できます。
+
+```php
+add_filter(
+	'od_ai_content_excluded_block_names',
+	static function ( $block_names ) {
+		$block_names[] = 'example/decorative-banner';
+
+		return $block_names;
+	}
+);
+```
+
+登録したブロックは Markdown に出力されません。診断では警告ではなく、「除外されたブロック」として情報に記録されます。記事そのものを Markdown 出力の対象外にする設定とは異なり、ここで省かれるのは登録したブロックだけです。
+
+一方、`example/profile-card` という独自ブロックが、HTML フォールバックによって次のように変換されていたとします。
+
+```markdown
+### 山田太郎
+
+ウェブサイトの運営を担当しています。
+
+[プロフィールを見る](https://example.com/profile/)
+```
+
+Markdown プレビューで、名前、説明文、リンクが意図した形で残っていることを確認できたなら、専用コンバーターを作らず、現在の変換結果を利用する判断もできます。その場合は、次のように「検証済み HTML フォールバック」へ登録します。
+
+```php
+add_filter(
+	'od_ai_content_verified_html_blocks',
+	static function ( $block_names ) {
+		$block_names[] = 'example/profile-card';
+
+		return $block_names;
+	}
+);
+```
+
+こちらは `example/profile-card` の出力を削除しません。変換された Markdown はそのまま残り、診断の「未検証のHTMLフォールバックで変換されたブロック」という注意だけが表示されなくなります。
+
+もし、プレビューで必要な文章やリンクが欠けている場合は、「検証済み」に登録して注意を消すのではなく、独自ブロックコンバーターで変換方法を決める方が良いでしょう。
+
+`od_ai_content_block_markdown` フィルターは、意図的な除外より先に評価されます。そのため、初期状態では除外されるブロックであっても、フィルターで変換結果を指定すれば、必要な情報を Markdown に残せます。より詳しいブロック変換 API の説明は、[OD AI Content の README](https://github.com/Olein-jp/od-ai-content#独自ブロックコンバーター)でも確認できます。
+
+これらは警告を一律に隠すための機能ではありません。テーマやブロックプラグインの更新によって HTML が変わる可能性もあるため、登録したあとも、更新時には Markdown プレビューをあらためて確認しておくと安心です。
 
 ### Markdown の状態を診断してプレビューできる
 
@@ -201,7 +302,7 @@ Markdown 版には、元の記事を示す情報と `noindex` の指示も付け
 
 ## インストールと最初の設定
 
-2026年7月30日時点の最新版は、[バージョン0.5.0](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.0)です。WordPress 6.9 以降、PHP 7.4 以降に対応しています。
+2026年7月31日時点の最新版は、[バージョン0.5.0](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.0)です。WordPress 6.9 以降、PHP 7.4 以降に対応しています。
 
 現時点では WordPress.org のプラグインディレクトリから検索してインストールする形式ではないため、GitHub のリリースページから配布用の `od-ai-content.zip` をダウンロードして利用します。
 
@@ -269,6 +370,7 @@ OD AI Content は、WordPress で公開している記事に、AI や外部ツ�
 ## 参考リンク
 
 - [OD AI Content — GitHub](https://github.com/Olein-jp/od-ai-content)
+- [OD AI Content README — ブロック変換](https://github.com/Olein-jp/od-ai-content#ブロック変換)
 - [OD AI Content 0.5.0 — GitHub Releases](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.0)
 - [The /llms.txt file](https://llmstxt.org/)
 - [プラグインの管理 — WordPress.org 日本語](https://ja.wordpress.org/support/article/managing-plugins/)
