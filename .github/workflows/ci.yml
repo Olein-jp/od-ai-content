@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -52,9 +52,6 @@ jobs:
             php: '8.5'
           - wordpress: 'latest'
             wp_core: ''
-            php: '7.2'
-          - wordpress: 'latest'
-            wp_core: ''
             php: '8.5'
 
     env:
@@ -63,12 +60,12 @@ jobs:
 
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '24'
           cache: npm
 
       - name: Set up PHP
@@ -101,7 +98,7 @@ jobs:
 
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -119,7 +116,7 @@ jobs:
         run: unzip -Z1 build/od-ai-content.zip
 
       - name: Upload the distribution ZIP
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: od-ai-content
           path: build/od-ai-content.zip

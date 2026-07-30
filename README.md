@@ -106,7 +106,7 @@ npm run env:stop
 
 Pull Requestと`main`ブランチへのpushでは、GitHub Actionsが設定検証、PHPCS、WordPress統合テスト、配布ZIP検証を実行します。
 
-統合テストは、対応下限のWordPress 6.9系と現在の安定版、および最低PHP系列の7.2と現在の安定系列である8.5を組み合わせた4構成です。`latest`はwp-envが取得するWordPressの現行安定版を表します。ローカルとCIは、どちらも`npm run test:php`で同じ統合テストを実行します。
+統合テストは、対応下限のWordPress 6.9系とPHP 7.2、WordPress 6.9系と現在の安定PHP系列である8.5、現在の安定WordPressとPHP 8.5を組み合わせた3構成です。`latest`はwp-envが取得するWordPressの現行安定版を表します。WordPress自体が要求するPHPバージョンを下回る組み合わせは対象に含めません。ローカルとCIは、どちらも`npm run test:php`で同じ統合テストを実行します。
 
 ローカルでCI相当の主要な検証を行うには、次を実行します。
 
