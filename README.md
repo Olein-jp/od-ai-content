@@ -14,6 +14,8 @@ WordPress の公開コンテンツを、意味構造と出典情報を保った 
 - Markdown レスポンスの `Content-Type`、`Content-Language`、canonical `Link`、`X-Robots-Tag`
 - 下書き、非公開、パスワード保護コンテンツの非公開
 - カスタム投稿タイプ、ブロック変換、メタデータ、最終文書のフィルター
+- 公開コンテンツの Markdown URL と短い説明を一覧化するルートの `/llms.txt`
+- `llms.txt` への掲載を全体の既定値または投稿単位で制御
 - GitHubのリリースタグを利用したWordPress標準のプラグイン更新通知
 
 通常ページが次の場合、
@@ -32,9 +34,17 @@ https://example.com/blog/example/index.html.md
 
 WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全体の有効・無効と対象投稿タイプを設定できます。
 
-対象投稿のブロックエディターにある「OD AI Content」インスペクターパネルでは、投稿単位で Markdown 出力から除外できます。除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。
+対象投稿のブロックエディターにある「OD AI Content」インスペクターパネルでは、投稿単位で次の項目を設定できます。
+
+- Markdown 出力からの除外
+- `llms.txt` への掲載・非掲載
+- `llms.txt` に掲載する短い説明（最大280文字）
+
+Markdown 出力から除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。また、`llms.txt` の掲載候補からも除外されます。
 
 `llms.txt default` を有効にすると、個別設定のない既存・新規コンテンツを `llms.txt` に一括で含められます。初期値は従来どおり「含めない」です。投稿編集画面の「OD AI Content」インスペクターパネルで指定した対象・対象外は、この既定値より優先されます。
+
+生成された一覧はサイトルートの `/llms.txt` で取得できます。短い説明が未入力の場合は、投稿の抜粋、本文の先頭部分の順に使用されます。
 
 ## 言語
 
