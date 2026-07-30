@@ -98,3 +98,39 @@ npm run test:php
 ```bash
 npm run env:stop
 ```
+
+## 対応バージョンとCI
+
+- WordPress 6.9 以降
+- PHP 7.2.24 以降
+
+Pull Requestと`main`ブランチへのpushでは、GitHub Actionsが設定検証、PHPCS、WordPress統合テスト、配布ZIP検証を実行します。
+
+統合テストは、対応下限のWordPress 6.9系と現在の安定版、および最低PHP系列の7.2と現在の安定系列である8.5を組み合わせた4構成です。`latest`はwp-envが取得するWordPressの現行安定版を表します。ローカルとCIは、どちらも`npm run test:php`で同じ統合テストを実行します。
+
+ローカルでCI相当の主要な検証を行うには、次を実行します。
+
+```bash
+composer validate --strict
+composer lint
+npm run test:php
+composer package:verify
+```
+
+## 配布ZIP
+
+配布ZIPは、Gitの同一コミットから追跡ファイルだけを取得し、`.gitattributes`の`export-ignore`設定を適用して生成します。
+
+```bash
+composer package:verify
+unzip -Z1 build/od-ai-content.zip
+```
+
+生成先は`build/od-ai-content.zip`です。ZIP内では`od-ai-content/`が最上位ディレクトリとなり、次の開発専用ファイルを除外します。
+
+- `.github`、テスト、開発・配布スクリプト
+- `node_modules`、開発用`vendor`
+- Composer、npm、PHPCS、PHPUnit、wp-envの設定
+- `.gitignore`、`.gitattributes`、ローカルoverride、生成済み`build`
+
+`composer package:verify`は、同じGit参照から生成した2つのZIPが同一であること、開発専用ファイルが含まれないこと、メインプラグインファイルと必須ヘッダーが正しいことも検証します。

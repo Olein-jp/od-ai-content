@@ -22,6 +22,12 @@
   },
   "scripts": {
     "lint": "phpcs",
-    "format": "phpcbf"
+    "format": "phpcbf",
+    "package": "bash scripts/build-zip.sh",
+    "package:verify": [
+      "@package",
+      "bash scripts/verify-zip.sh build/od-ai-content.zip",
+      "bash scripts/check-reproducible-zip.sh"
+    ]
   }
 }
