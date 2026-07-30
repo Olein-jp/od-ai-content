@@ -302,7 +302,7 @@ Markdown 版には、元の記事を示す情報と `noindex` の指示も付け
 
 ## インストールと最初の設定
 
-2026年7月31日時点の最新版は、[バージョン0.5.0](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.0)です。WordPress 6.9 以降、PHP 7.4 以降に対応しています。
+2026年7月31日時点の最新版は、[バージョン0.5.1](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.1)です。WordPress 6.9 以降、PHP 7.4 以降に対応しています。
 
 現時点では WordPress.org のプラグインディレクトリから検索してインストールする形式ではないため、GitHub のリリースページから配布用の `od-ai-content.zip` をダウンロードして利用します。
 
@@ -371,7 +371,7 @@ OD AI Content は、WordPress で公開している記事に、AI や外部ツ�
 
 - [OD AI Content — GitHub](https://github.com/Olein-jp/od-ai-content)
 - [OD AI Content README — ブロック変換](https://github.com/Olein-jp/od-ai-content#ブロック変換)
-- [OD AI Content 0.5.0 — GitHub Releases](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.0)
+- [OD AI Content 0.5.1 — GitHub Releases](https://github.com/Olein-jp/od-ai-content/releases/tag/0.5.1)
 - [The /llms.txt file](https://llmstxt.org/)
 - [プラグインの管理 — WordPress.org 日本語](https://ja.wordpress.org/support/article/managing-plugins/)
 - [Cron — Plugin Handbook](https://developer.wordpress.org/plugins/cron/)
