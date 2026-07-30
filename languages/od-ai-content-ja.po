@@ -1,33 +1,32 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.3.0\n"
+"Project-Id-Version: OD AI Content 0.4.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
-"POT-Creation-Date: 2026-07-30T07:51:18+00:00\n"
-"PO-Revision-Date: 2026-07-30 15:25+0900\n"
 "Last-Translator: Olein Design\n"
 "Language-Team: Japanese\n"
-"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-30T07:51:18+00:00\n"
+"PO-Revision-Date: 2026-07-30 15:25+0900\n"
+"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-ai-content\n"
 
 #. Plugin Name of the plugin
-#: od-ai-content.php includes/class-admin-diagnostics.php:66
-#: includes/class-admin-settings.php:114 includes/class-admin-settings.php:115
+#: od-ai-content.php
+#: includes/class-admin-diagnostics.php:103
+#: includes/class-admin-settings.php:114
+#: includes/class-admin-settings.php:115
 #: includes/class-editor-settings.php:187
 msgid "OD AI Content"
 msgstr "OD AI Content"
 
 #. Description of the plugin
 #: od-ai-content.php
-msgid ""
-"Delivers WordPress content as Markdown that is easier for AI systems to "
-"retrieve and understand."
-msgstr ""
-"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+msgid "Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand."
+msgstr "WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
 
 #. Author of the plugin
 #: od-ai-content.php
@@ -67,13 +66,8 @@ msgid "Include content without an individual setting in llms.txt"
 msgstr "個別設定のないコンテンツをllms.txtに含める"
 
 #: includes/class-admin-settings.php:214
-msgid ""
-"When enabled, existing and newly published content in the selected post "
-"types is included by default. Individual content settings override this "
-"default."
-msgstr ""
-"有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで"
-"含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
+msgid "When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default."
+msgstr "有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
 
 #: includes/class-block-converter.php:312
 #: includes/class-html-to-markdown.php:157
@@ -247,3 +241,21 @@ msgstr "Markdownコンテンツが見つかりません。"
 #: includes/class-settings.php:134
 msgid "You are not allowed to change OD AI Content settings."
 msgstr "OD AI Contentの設定を変更する権限がありません。"
+
+#: includes/class-admin-diagnostics.php:144
+msgid "View Markdown"
+msgstr "Markdownを表示"
+
+#: includes/class-admin-diagnostics.php:156
+msgid "Run OD AI Content diagnosis"
+msgstr "OD AI Contentの診断を実行"
+
+#: includes/class-admin-diagnostics.php:217
+msgid "The bulk diagnosis request could not be verified."
+msgstr "一括診断リクエストを確認できませんでした。"
+
+#. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
+#: includes/class-admin-diagnostics.php:238
+#, php-format
+msgid "OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: %3$d, Failed: %4$d."
+msgstr "OD AI Content一括診断 — 待機中：%1$d、処理中：%2$d、完了：%3$d、失敗：%4$d。"

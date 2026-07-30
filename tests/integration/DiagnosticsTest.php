@@ -8,6 +8,7 @@
 use Olein\OdAiContent\Admin_Diagnostics;
 use Olein\OdAiContent\Block_Converter;
 use Olein\OdAiContent\Content_Resolver;
+use Olein\OdAiContent\Diagnostic_Queue;
 use Olein\OdAiContent\Diagnostics;
 use Olein\OdAiContent\Diagnostics_REST_Controller;
 use Olein\OdAiContent\Html_To_Markdown;
@@ -57,7 +58,11 @@ class DiagnosticsTest extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		delete_option( Settings::OPTION_NAME );
+		delete_option( Diagnostic_Queue::OPTION_NAME );
+		delete_option( Diagnostic_Queue::LOCK_OPTION_NAME );
+		wp_clear_scheduled_hook( Diagnostic_Queue::CRON_HOOK );
 		wp_set_current_user( 0 );
+		unset( $_REQUEST['_wpnonce'] );
 		parent::tear_down();
 	}
 
@@ -262,7 +267,74 @@ BLOCKS;
 		$after = ob_get_clean();
 
 		$this->assertStringContainsString( 'not_diagnosed', $before );
+		$this->assertStringContainsString( 'index.html.md', $before );
 		$this->assertStringContainsString( 'normal', $after );
+		$this->assertStringContainsString( 'View Markdown', $after );
+	}
+
+	/**
+	 * The list table omits Markdown links for ineligible content.
+	 *
+	 * @return void
+	 */
+	public function test_admin_column_hides_markdown_link_for_ineligible_content() {
+		$draft_id = self::factory()->post->create(
+			array(
+				'post_status' => 'draft',
+			)
+		);
+		$admin    = new Admin_Diagnostics( $this->settings, $this->diagnostics );
+
+		ob_start();
+		$admin->render_column( Admin_Diagnostics::COLUMN_KEY, $draft_id );
+		$output = ob_get_clean();
+
+		$this->assertStringNotContainsString( 'index.html.md', $output );
+		$this->assertStringNotContainsString( 'View Markdown', $output );
+	}
+
+	/**
+	 * The bulk action validates its nonce and enqueues selected posts.
+	 *
+	 * @return void
+	 */
+	public function test_admin_bulk_action_validates_nonce_and_enqueues_posts() {
+		$administrator = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id       = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Bulk content.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+		$queue         = new Diagnostic_Queue( $this->diagnostics, $this->settings );
+		$admin         = new Admin_Diagnostics(
+			$this->settings,
+			$this->diagnostics,
+			new Content_Resolver( $this->settings ),
+			new Markdown_Url(),
+			$queue
+		);
+
+		wp_set_current_user( $administrator );
+		$_REQUEST['_wpnonce'] = wp_create_nonce( 'bulk-posts' );
+
+		$redirect = $admin->handle_bulk_action(
+			'https://example.org/wp-admin/edit.php',
+			'od_ai_content_diagnose',
+			array( $post_id )
+		);
+
+		$this->assertStringContainsString( 'od_ai_content_diagnostics_queued=1', $redirect );
+		$this->assertSame( 1, $queue->get_progress()['total'] );
+
+		$_REQUEST['_wpnonce'] = 'invalid';
+		$invalid_redirect     = $admin->handle_bulk_action(
+			'https://example.org/wp-admin/edit.php',
+			'od_ai_content_diagnose',
+			array( $post_id )
+		);
+
+		$this->assertStringContainsString( 'od_ai_content_diagnostics_error=invalid_nonce', $invalid_redirect );
 	}
 
 	/**
