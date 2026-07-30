@@ -13,11 +13,35 @@ namespace Olein\OdAiContent;
 final class Block_Converter {
 
 	/**
+	 * Block names whose rendered HTML conversion is an established path.
+	 *
+	 * @var string[]
+	 */
+	const VERIFIED_HTML_BLOCKS = array(
+		'core/button',
+		'core/code',
+		'core/heading',
+		'core/image',
+		'core/list',
+		'core/list-item',
+		'core/paragraph',
+		'core/quote',
+		'core/table',
+	);
+
+	/**
 	 * HTML fallback converter.
 	 *
 	 * @var Html_To_Markdown
 	 */
 	private $html_converter;
+
+	/**
+	 * Active conversion report, or null when reporting is disabled.
+	 *
+	 * @var array|null
+	 */
+	private $active_report;
 
 	/**
 	 * Constructor.
@@ -46,6 +70,36 @@ final class Block_Converter {
 		}
 
 		return implode( "\n\n", $fragments );
+	}
+
+	/**
+	 * Convert blocks and report exclusions and unverified HTML fallbacks.
+	 *
+	 * @param array[] $blocks Parsed blocks.
+	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
+	 */
+	public function convert_blocks_with_report( array $blocks ) {
+		$previous_report     = $this->active_report;
+		$this->active_report = array(
+			'excluded_blocks' => array(),
+			'fallback_blocks' => array(),
+		);
+
+		$markdown = $this->convert_blocks( $blocks );
+		$report   = $this->active_report;
+
+		$this->active_report = $previous_report;
+
+		foreach ( $report as $key => $names ) {
+			$names          = array_values( array_unique( $names ) );
+			$report[ $key ] = $names;
+		}
+
+		return array(
+			'markdown'        => $markdown,
+			'excluded_blocks' => $report['excluded_blocks'],
+			'fallback_blocks' => $report['fallback_blocks'],
+		);
 	}
 
 	/**
@@ -82,6 +136,7 @@ final class Block_Converter {
 		}
 
 		if ( in_array( $name, array( 'core/spacer', 'core/navigation', 'core/social-links', 'core/query' ), true ) ) {
+			$this->record_block( 'excluded_blocks', $name );
 			return '';
 		}
 
@@ -124,6 +179,10 @@ final class Block_Converter {
 		$html     = render_block( $block );
 		$markdown = $this->html_converter->convert( $html );
 
+		if ( '' !== trim( $markdown ) && ! in_array( $name, self::VERIFIED_HTML_BLOCKS, true ) ) {
+			$this->record_block( 'fallback_blocks', '' === $name ? 'unregistered' : $name );
+		}
+
 		if ( 'core/heading' === $name ) {
 			$markdown = preg_replace( '/^#\s+/m', '## ', $markdown );
 		}
@@ -137,6 +196,21 @@ final class Block_Converter {
 		 * @param array  $block    Parsed block.
 		 */
 		return (string) apply_filters( 'od_ai_content_converted_block_markdown', $markdown, $block );
+	}
+
+	/**
+	 * Add a block name to the active conversion report.
+	 *
+	 * @param string $key  Report collection key.
+	 * @param string $name Block name.
+	 * @return void
+	 */
+	private function record_block( $key, $name ) {
+		if ( null === $this->active_report || ! isset( $this->active_report[ $key ] ) ) {
+			return;
+		}
+
+		$this->active_report[ $key ][] = (string) $name;
 	}
 
 	/**

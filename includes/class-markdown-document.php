@@ -46,8 +46,32 @@ final class Markdown_Document {
 	 * @return string
 	 */
 	public function generate( WP_Post $post ) {
+		$generated = $this->generate_document( $post, false );
+
+		return $generated['markdown'];
+	}
+
+	/**
+	 * Generate a Markdown document with a block conversion report.
+	 *
+	 * @param WP_Post $post Post object.
+	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
+	 */
+	public function generate_with_report( WP_Post $post ) {
+		return $this->generate_document( $post, true );
+	}
+
+	/**
+	 * Generate a complete Markdown document and optional conversion report.
+	 *
+	 * @param WP_Post $post        Post object.
+	 * @param bool    $with_report Whether to collect a conversion report.
+	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
+	 */
+	private function generate_document( WP_Post $post, $with_report ) {
 		$metadata  = $this->get_metadata( $post );
-		$content   = $this->generate_content( $post );
+		$converted = $this->generate_content( $post, $with_report );
+		$content   = $converted['markdown'];
 		$title     = get_the_title( $post );
 		$document  = $this->serialize_front_matter( $metadata );
 		$document .= "\n# " . $title . "\n";
@@ -65,16 +89,23 @@ final class Markdown_Document {
 		 * @param WP_Post $post     Source post.
 		 * @param array   $metadata Document metadata.
 		 */
-		return (string) apply_filters( 'od_ai_content_markdown_document', $document, $post, $metadata );
+		$document = (string) apply_filters( 'od_ai_content_markdown_document', $document, $post, $metadata );
+
+		return array(
+			'markdown'        => $document,
+			'excluded_blocks' => $converted['excluded_blocks'],
+			'fallback_blocks' => $converted['fallback_blocks'],
+		);
 	}
 
 	/**
 	 * Generate body Markdown with the post set as rendering context.
 	 *
-	 * @param WP_Post $post Post object.
-	 * @return string
+	 * @param WP_Post $post        Post object.
+	 * @param bool    $with_report Whether to collect a conversion report.
+	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
 	 */
-	private function generate_content( WP_Post $post ) {
+	private function generate_content( WP_Post $post, $with_report = false ) {
 		$previous_post = isset( $GLOBALS['post'] ) && $GLOBALS['post'] instanceof WP_Post
 			? $GLOBALS['post']
 			: null;
@@ -83,7 +114,14 @@ final class Markdown_Document {
 		$GLOBALS['post'] = $post;
 		setup_postdata( $post );
 
-		$content = $this->block_converter->convert_blocks( parse_blocks( $post->post_content ) );
+		$blocks    = parse_blocks( $post->post_content );
+		$converted = $with_report
+			? $this->block_converter->convert_blocks_with_report( $blocks )
+			: array(
+				'markdown'        => $this->block_converter->convert_blocks( $blocks ),
+				'excluded_blocks' => array(),
+				'fallback_blocks' => array(),
+			);
 
 		if ( $previous_post ) {
 			// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- restore the previous rendering context.
@@ -93,7 +131,9 @@ final class Markdown_Document {
 			unset( $GLOBALS['post'] );
 		}
 
-		return trim( $content );
+		$converted['markdown'] = trim( $converted['markdown'] );
+
+		return $converted;
 	}
 
 	/**

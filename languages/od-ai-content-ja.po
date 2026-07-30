@@ -1,31 +1,33 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.2.2\n"
-"Report-Msgid-Bugs-To: https://github.com/Olein-jp/od-ai-content/issues\n"
+"Project-Id-Version: OD AI Content 0.3.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
+"POT-Creation-Date: 2026-07-30T07:51:18+00:00\n"
+"PO-Revision-Date: 2026-07-30 15:25+0900\n"
 "Last-Translator: Olein Design\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-30T06:29:56+00:00\n"
-"PO-Revision-Date: 2026-07-30 15:25+0900\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-ai-content\n"
 
 #. Plugin Name of the plugin
-#: od-ai-content.php
-#: includes/class-admin-settings.php:114
-#: includes/class-admin-settings.php:115
-#: includes/class-editor-settings.php:182
+#: od-ai-content.php includes/class-admin-diagnostics.php:66
+#: includes/class-admin-settings.php:114 includes/class-admin-settings.php:115
+#: includes/class-editor-settings.php:187
 msgid "OD AI Content"
 msgstr "OD AI Content"
 
 #. Description of the plugin
 #: od-ai-content.php
-msgid "Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand."
-msgstr "WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+msgid ""
+"Delivers WordPress content as Markdown that is easier for AI systems to "
+"retrieve and understand."
+msgstr ""
+"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
 
 #. Author of the plugin
 #: od-ai-content.php
@@ -65,17 +67,126 @@ msgid "Include content without an individual setting in llms.txt"
 msgstr "個別設定のないコンテンツをllms.txtに含める"
 
 #: includes/class-admin-settings.php:214
-msgid "When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default."
-msgstr "有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
+msgid ""
+"When enabled, existing and newly published content in the selected post "
+"types is included by default. Individual content settings override this "
+"default."
+msgstr ""
+"有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで"
+"含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
 
-#: includes/class-block-converter.php:238
+#: includes/class-block-converter.php:312
 #: includes/class-html-to-markdown.php:157
 msgid "Embedded content"
 msgstr "埋め込みコンテンツ"
 
-#: includes/class-block-converter.php:278
+#: includes/class-block-converter.php:352
 msgid "Media"
 msgstr "メディア"
+
+#: includes/class-diagnostics-rest-controller.php:94
+msgid "Unique identifier for the post."
+msgstr "投稿の一意識別子。"
+
+#: includes/class-diagnostics-rest-controller.php:116
+msgid "The requested post was not found."
+msgstr "指定された投稿が見つかりませんでした。"
+
+#: includes/class-diagnostics-rest-controller.php:124
+msgid "This post type is not enabled for Markdown output."
+msgstr "この投稿タイプではMarkdown出力が有効になっていません。"
+
+#: includes/class-diagnostics-rest-controller.php:132
+msgid "You are not allowed to diagnose this post."
+msgstr "この投稿を診断する権限がありません。"
+
+#: includes/class-diagnostics.php:231
+msgid "Normal"
+msgstr "正常"
+
+#: includes/class-diagnostics.php:232
+msgid "Warning"
+msgstr "注意"
+
+#: includes/class-diagnostics.php:233
+msgid "Error"
+msgstr "エラー"
+
+#: includes/class-diagnostics.php:234
+msgid "Excluded"
+msgstr "除外"
+
+#: includes/class-diagnostics.php:235
+msgid "Not diagnosed"
+msgstr "未診断"
+
+#: includes/class-diagnostics.php:424
+msgid "The Markdown document was generated successfully."
+msgstr "Markdown文書を正常に生成できました。"
+
+#: includes/class-diagnostics.php:427
+msgid "The Markdown document could not be generated."
+msgstr "Markdown文書を生成できませんでした。"
+
+#: includes/class-diagnostics.php:430
+msgid "Required front matter is present."
+msgstr "必須のfront matterが含まれています。"
+
+#. translators: %s: comma-separated metadata field names.
+#: includes/class-diagnostics.php:435
+#, php-format
+msgid "Required front matter is missing: %s"
+msgstr "必須のfront matterが不足しています：%s"
+
+#: includes/class-diagnostics.php:440
+msgid "The document has one H1 matching the post title."
+msgstr "投稿タイトルと一致するH1が文書内に1つあります。"
+
+#: includes/class-diagnostics.php:443
+msgid "The document H1 is missing."
+msgstr "文書のH1がありません。"
+
+#: includes/class-diagnostics.php:446
+msgid "The document has more than one H1."
+msgstr "文書に複数のH1があります。"
+
+#: includes/class-diagnostics.php:449
+msgid "The document H1 does not match the post title."
+msgstr "文書のH1が投稿タイトルと一致しません。"
+
+#: includes/class-diagnostics.php:452
+msgid "The Markdown body contains content."
+msgstr "Markdown本文にコンテンツがあります。"
+
+#: includes/class-diagnostics.php:455
+msgid "The Markdown body is empty."
+msgstr "Markdown本文が空です。"
+
+#: includes/class-diagnostics.php:458
+msgid "The heading hierarchy has no level jumps."
+msgstr "見出し階層にレベル飛びはありません。"
+
+#. translators: %s: comma-separated heading level transitions, such as 2-4.
+#: includes/class-diagnostics.php:463
+#, php-format
+msgid "The heading hierarchy contains level jumps: %s"
+msgstr "見出し階層にレベル飛びがあります：%s"
+
+#. translators: %s: comma-separated WordPress block names.
+#: includes/class-diagnostics.php:470
+#, php-format
+msgid "Blocks excluded by the default conversion policy: %s"
+msgstr "デフォルトの変換方針によって除外されたブロック：%s"
+
+#. translators: %s: comma-separated WordPress block names.
+#: includes/class-diagnostics.php:477
+#, php-format
+msgid "Blocks converted through the unverified HTML fallback: %s"
+msgstr "未検証のHTMLフォールバックで変換されたブロック：%s"
+
+#: includes/class-diagnostics.php:482
+msgid "Unknown diagnostic result."
+msgstr "不明な診断結果です。"
 
 #: includes/class-editor-settings.php:68
 msgid "Whether this content is excluded from Markdown output."
@@ -89,17 +200,41 @@ msgstr "このコンテンツをllms.txtに含めるかどうか。"
 msgid "Short llms.txt description for this content."
 msgstr "このコンテンツのllms.txt用の短い説明。"
 
-#: includes/class-editor-settings.php:175
+#: includes/class-editor-settings.php:176
+msgid "The diagnosis could not be completed."
+msgstr "診断を完了できませんでした。"
+
+#: includes/class-editor-settings.php:178
+msgid "Markdown diagnosis"
+msgstr "Markdown診断"
+
+#: includes/class-editor-settings.php:179
+msgid "Save the post before diagnosing to include the latest changes."
+msgstr "最新の変更を診断へ反映するには、先に投稿を保存してください。"
+
+#: includes/class-editor-settings.php:180
 msgid "Short description"
 msgstr "短い説明"
 
-#: includes/class-editor-settings.php:177
+#: includes/class-editor-settings.php:182
 msgid "Exclude this content from Markdown output"
 msgstr "このコンテンツをMarkdown出力から除外"
 
-#: includes/class-editor-settings.php:180
+#: includes/class-editor-settings.php:185
 msgid "Include this content in llms.txt"
 msgstr "このコンテンツをllms.txtに含める"
+
+#: includes/class-editor-settings.php:188
+msgid "Markdown preview"
+msgstr "Markdownプレビュー"
+
+#: includes/class-editor-settings.php:189
+msgid "Run diagnosis again"
+msgstr "診断を再実行"
+
+#: includes/class-editor-settings.php:190
+msgid "Open published Markdown"
+msgstr "公開中のMarkdownを開く"
 
 #: includes/class-llms-txt.php:132
 msgid "Content"

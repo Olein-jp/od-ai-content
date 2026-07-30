@@ -16,6 +16,8 @@ WordPress の公開コンテンツを、意味構造と出典情報を保った 
 - カスタム投稿タイプ、ブロック変換、メタデータ、最終文書のフィルター
 - 公開コンテンツの Markdown URL と短い説明を一覧化するルートの `/llms.txt`
 - `llms.txt` への掲載を全体の既定値または投稿単位で制御
+- 投稿一覧で Markdown 診断状態（正常・注意・エラー・除外・未診断）を確認
+- 投稿編集画面で診断結果、変換上の注意、Markdown プレビューを確認
 - GitHubのリリースタグを利用したWordPress標準のプラグイン更新通知
 
 通常ページが次の場合、
@@ -39,6 +41,8 @@ WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全�
 - Markdown 出力からの除外
 - `llms.txt` への掲載・非掲載
 - `llms.txt` に掲載する短い説明（最大280文字）
+- Markdown の診断結果とプレビュー
+- 除外されたブロックと、未検証の HTML フォールバックで変換されたブロック
 
 Markdown 出力から除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。また、`llms.txt` の掲載候補からも除外されます。
 

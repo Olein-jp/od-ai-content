@@ -158,6 +158,7 @@ final class Editor_Settings {
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/editor-settings.js', OD_AI_CONTENT_FILE ),
 			array(
+				'wp-api-fetch',
 				'wp-components',
 				'wp-data',
 				'wp-editor',
@@ -172,6 +173,10 @@ final class Editor_Settings {
 			self::SCRIPT_HANDLE,
 			'odAiContentEditorSettings',
 			array(
+				'diagnosisError'       => __( 'The diagnosis could not be completed.', 'od-ai-content' ),
+				'diagnosisPath'        => '/od-ai-content/v1/posts/%d/diagnosis',
+				'diagnosisTitle'       => __( 'Markdown diagnosis', 'od-ai-content' ),
+				'dirtyNotice'          => __( 'Save the post before diagnosing to include the latest changes.', 'od-ai-content' ),
 				'descriptionLabel'     => __( 'Short description', 'od-ai-content' ),
 				'descriptionMetaKey'   => Llms_Selection::DESCRIPTION_META_KEY,
 				'exclusionLabel'       => __( 'Exclude this content from Markdown output', 'od-ai-content' ),
@@ -180,6 +185,9 @@ final class Editor_Settings {
 				'llmsSelectionLabel'   => __( 'Include this content in llms.txt', 'od-ai-content' ),
 				'llmsSelectionMetaKey' => Llms_Selection::META_KEY,
 				'panelTitle'           => __( 'OD AI Content', 'od-ai-content' ),
+				'previewLabel'         => __( 'Markdown preview', 'od-ai-content' ),
+				'runDiagnosisLabel'    => __( 'Run diagnosis again', 'od-ai-content' ),
+				'viewMarkdownLabel'    => __( 'Open published Markdown', 'od-ai-content' ),
 			)
 		);
 	}
