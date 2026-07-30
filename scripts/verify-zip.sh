@@ -19,11 +19,37 @@ if printf '%s\n' "${archive_entries}" | grep -Ev "^${plugin_slug}/" >/dev/null; 
 	exit 1
 fi
 
-forbidden_pattern="^${plugin_slug}/(\\.github/|\\.editorconfig$|\\.gitattributes$|\\.gitignore$|\\.wp-env\\.json$|\\.wp-env\\.override\\.json$|build/|composer\\.json$|composer\\.lock$|node_modules/|package\\.json$|package-lock\\.json$|phpcs\\.xml\\.dist$|phpunit\\.xml\\.dist$|scripts/|tests/|vendor/)"
+forbidden_pattern="^${plugin_slug}/(\\.github/|\\.editorconfig$|\\.gitattributes$|\\.gitignore$|\\.wp-env\\.json$|\\.wp-env\\.override\\.json$|build/|composer\\.json$|composer\\.lock$|node_modules/|package\\.json$|package-lock\\.json$|phpcs\\.xml\\.dist$|phpunit\\.xml\\.dist$|scripts/|tests/)"
 
 if printf '%s\n' "${archive_entries}" | grep -E "${forbidden_pattern}" >/dev/null; then
 	printf 'Distribution archive contains development-only files:\n' >&2
 	printf '%s\n' "${archive_entries}" | grep -E "${forbidden_pattern}" >&2
+	exit 1
+fi
+
+required_vendor_files=(
+	"${plugin_slug}/vendor/autoload.php"
+	"${plugin_slug}/vendor/inc2734/wp-github-plugin-updater/src/Bootstrap.php"
+	"${plugin_slug}/vendor/erusev/parsedown/Parsedown.php"
+)
+
+for required_vendor_file in "${required_vendor_files[@]}"; do
+	if ! printf '%s\n' "${archive_entries}" | grep -Fx "${required_vendor_file}" >/dev/null; then
+		printf 'Required production dependency is missing: %s\n' "${required_vendor_file}" >&2
+		exit 1
+	fi
+done
+
+unexpected_vendor_entries="$(
+	printf '%s\n' "${archive_entries}" |
+		grep "^${plugin_slug}/vendor/" |
+		grep -Ev "^${plugin_slug}/vendor/($|autoload\\.php$|composer/|inc2734/|erusev/)" ||
+		true
+)"
+
+if [[ -n "${unexpected_vendor_entries}" ]]; then
+	printf 'Distribution archive contains unexpected Composer dependencies:\n' >&2
+	printf '%s\n' "${unexpected_vendor_entries}" >&2
 	exit 1
 fi
 
@@ -38,6 +64,7 @@ required_headers=(
 	'Plugin Name:[[:space:]]+OD AI Content'
 	'Requires at least:[[:space:]]+6\.9'
 	'Requires PHP:[[:space:]]+7\.4'
+	'Update URI:[[:space:]]+https://github\.com/Olein-jp/od-ai-content'
 	'Text Domain:[[:space:]]+od-ai-content'
 )
 

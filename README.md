@@ -14,6 +14,7 @@ WordPress の公開コンテンツを、意味構造と出典情報を保った 
 - Markdown レスポンスの `Content-Type`、`Content-Language`、canonical `Link`、`X-Robots-Tag`
 - 下書き、非公開、パスワード保護コンテンツの非公開
 - カスタム投稿タイプ、ブロック変換、メタデータ、最終文書のフィルター
+- GitHubのリリースタグを利用したWordPress標準のプラグイン更新通知
 
 通常ページが次の場合、
 
@@ -108,6 +109,14 @@ Pull Requestと`main`ブランチへのpushでは、GitHub Actionsが設定検�
 
 統合テストは、対応下限のWordPress 6.9系とPHP 7.4、WordPress 6.9系と現在の安定PHP系列である8.5、現在の安定WordPressとPHP 8.5を組み合わせた3構成です。`latest`はwp-envが取得するWordPressの現行安定版を表します。ローカルとCIは、どちらも`npm run test:php`で同じ統合テストを実行します。
 
+## GitHub経由の更新
+
+WordPress標準のプラグイン更新画面から、`Olein-jp/od-ai-content`のGitHub最新リリースを確認します。公開リポジトリを利用するため、トークンや認証情報の設定は不要です。
+
+更新判定には、GitHubのリリースタグとプラグインヘッダーの`Version`を使用します。GitHub APIへ接続できない場合は更新情報を追加せず、Markdown配信など既存機能の動作を継続します。
+
+リリース時は、リリースタグとプラグインの`Version`を一致させ、`composer package:verify`で生成した`od-ai-content.zip`をGitHub Releaseのアセットとして添付します。GitHub ActionsのArtifactだけではプラグイン更新用の配布ファイルになりません。
+
 ローカルでCI相当の主要な検証を行うには、次を実行します。
 
 ```bash
@@ -129,8 +138,10 @@ unzip -Z1 build/od-ai-content.zip
 生成先は`build/od-ai-content.zip`です。ZIP内では`od-ai-content/`が最上位ディレクトリとなり、次の開発専用ファイルを除外します。
 
 - `.github`、テスト、開発・配布スクリプト
-- `node_modules`、開発用`vendor`
+- `node_modules`、Composerの開発専用依存
 - Composer、npm、PHPCS、PHPUnit、wp-envの設定
 - `.gitignore`、`.gitattributes`、ローカルoverride、生成済み`build`
 
-`composer package:verify`は、同じGit参照から生成した2つのZIPが同一であること、開発専用ファイルが含まれないこと、メインプラグインファイルと必須ヘッダーが正しいことも検証します。
+配布ZIPには、UpdaterとParsedownの本番依存だけを`vendor`へインストールして同梱します。
+
+`composer package:verify`は、同じGit参照から生成した2つのZIPが同一であること、開発専用ファイルや想定外のComposer依存が含まれないこと、メインプラグインファイルと必須ヘッダーが正しいことも検証します。

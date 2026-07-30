@@ -6,6 +6,7 @@
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Olein Design
+ * Update URI:        https://github.com/Olein-jp/od-ai-content
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       od-ai-content
@@ -20,6 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'OD_AI_CONTENT_VERSION', '0.1.0' );
 define( 'OD_AI_CONTENT_FILE', __FILE__ );
 define( 'OD_AI_CONTENT_DIR', plugin_dir_path( __FILE__ ) );
+
+$autoload_file = OD_AI_CONTENT_DIR . 'vendor/autoload.php';
+if ( is_readable( $autoload_file ) ) {
+	require_once $autoload_file;
+}
 
 require_once OD_AI_CONTENT_DIR . 'includes/class-html-to-markdown.php';
 require_once OD_AI_CONTENT_DIR . 'includes/interface-block-markdown-converter.php';
@@ -36,6 +42,7 @@ require_once OD_AI_CONTENT_DIR . 'includes/class-discovery.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-llms-selection.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-llms-txt.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-llms-txt-controller.php';
+require_once OD_AI_CONTENT_DIR . 'includes/class-github-updater.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-plugin.php';
 
 register_activation_hook( __FILE__, array( 'Olein\\OdAiContent\\Plugin', 'activate' ) );

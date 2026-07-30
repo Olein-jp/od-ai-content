@@ -26,6 +26,7 @@ final class Plugin {
 		$url             = new Markdown_Url();
 		$llms_txt        = new Llms_Txt( $resolver, $url, $settings );
 		$cache_validator = new Markdown_Cache_Validator();
+		$github_updater  = new GitHub_Updater();
 
 		$controller          = new Response_Controller( $resolver, $document, $url, $cache_validator );
 		$llms_txt_controller = new Llms_Txt_Controller( $llms_txt );
@@ -34,6 +35,7 @@ final class Plugin {
 		$controller->register_hooks();
 		$llms_txt_controller->register_hooks();
 		$discovery->register_hooks();
+		$github_updater->register();
 
 		if ( is_admin() ) {
 			$admin_settings = new Admin_Settings( $settings );
