@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OD AI Content 0.2.2\n"
+"Report-Msgid-Bugs-To: https://github.com/Olein-jp/od-ai-content/issues\n"
+"Last-Translator: Olein Design\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-07-30T06:29:56+00:00\n"
+"PO-Revision-Date: 2026-07-30 15:25+0900\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: od-ai-content\n"
+
+#. Plugin Name of the plugin
+#: od-ai-content.php
+#: includes/class-admin-settings.php:114
+#: includes/class-admin-settings.php:115
+#: includes/class-editor-settings.php:182
+msgid "OD AI Content"
+msgstr "OD AI Content"
+
+#. Description of the plugin
+#: od-ai-content.php
+msgid "Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand."
+msgstr "WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+
+#. Author of the plugin
+#: od-ai-content.php
+msgid "Olein Design"
+msgstr "Olein Design"
+
+#: includes/class-admin-settings.php:77
+msgid "Markdown output"
+msgstr "Markdown出力"
+
+#: includes/class-admin-settings.php:84
+msgid "Output status"
+msgstr "出力状態"
+
+#: includes/class-admin-settings.php:92
+msgid "Post types"
+msgstr "投稿タイプ"
+
+#: includes/class-admin-settings.php:100
+msgid "llms.txt default"
+msgstr "llms.txtのデフォルト"
+
+#: includes/class-admin-settings.php:129
+msgid "You are not allowed to access this page."
+msgstr "このページにアクセスする権限がありません。"
+
+#: includes/class-admin-settings.php:151
+msgid "Control which public content receives a Markdown alternative."
+msgstr "Markdown代替表現を提供する公開コンテンツを設定します。"
+
+#: includes/class-admin-settings.php:169
+msgid "Enable Markdown alternatives"
+msgstr "Markdown代替表現を有効化"
+
+#: includes/class-admin-settings.php:211
+msgid "Include content without an individual setting in llms.txt"
+msgstr "個別設定のないコンテンツをllms.txtに含める"
+
+#: includes/class-admin-settings.php:214
+msgid "When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default."
+msgstr "有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
+
+#: includes/class-block-converter.php:238
+#: includes/class-html-to-markdown.php:157
+msgid "Embedded content"
+msgstr "埋め込みコンテンツ"
+
+#: includes/class-block-converter.php:278
+msgid "Media"
+msgstr "メディア"
+
+#: includes/class-editor-settings.php:68
+msgid "Whether this content is excluded from Markdown output."
+msgstr "このコンテンツをMarkdown出力から除外するかどうか。"
+
+#: includes/class-editor-settings.php:81
+msgid "Whether this content is included in llms.txt."
+msgstr "このコンテンツをllms.txtに含めるかどうか。"
+
+#: includes/class-editor-settings.php:94
+msgid "Short llms.txt description for this content."
+msgstr "このコンテンツのllms.txt用の短い説明。"
+
+#: includes/class-editor-settings.php:175
+msgid "Short description"
+msgstr "短い説明"
+
+#: includes/class-editor-settings.php:177
+msgid "Exclude this content from Markdown output"
+msgstr "このコンテンツをMarkdown出力から除外"
+
+#: includes/class-editor-settings.php:180
+msgid "Include this content in llms.txt"
+msgstr "このコンテンツをllms.txtに含める"
+
+#: includes/class-llms-txt.php:132
+msgid "Content"
+msgstr "コンテンツ"
+
+#: includes/class-response-controller.php:165
+msgid "Markdown content not found."
+msgstr "Markdownコンテンツが見つかりません。"
+
+#: includes/class-settings.php:134
+msgid "You are not allowed to change OD AI Content settings."
+msgstr "OD AI Contentの設定を変更する権限がありません。"

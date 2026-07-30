@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name:       OD AI Content
- * Description:       WordPressコンテンツをAIが取得・理解しやすいMarkdownとして配信します。
- * Version:           0.2.1
+ * Description:       Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand.
+ * Version:           0.2.2
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Olein Design
@@ -10,6 +10,7 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       od-ai-content
+ * Domain Path:       /languages
  *
  * @package OdAiContent
  */
@@ -18,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OD_AI_CONTENT_VERSION', '0.2.1' );
+define( 'OD_AI_CONTENT_VERSION', '0.2.2' );
 define( 'OD_AI_CONTENT_FILE', __FILE__ );
 define( 'OD_AI_CONTENT_DIR', plugin_dir_path( __FILE__ ) );
 

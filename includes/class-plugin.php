@@ -18,6 +18,8 @@ final class Plugin {
 	 * @return void
 	 */
 	public static function load() {
+		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
+
 		$html_converter  = new Html_To_Markdown();
 		$block_converter = new Block_Converter( $html_converter );
 		$document        = new Markdown_Document( $block_converter );
@@ -48,6 +50,19 @@ final class Plugin {
 			$post_exclusion->register_hooks();
 			$llms_selection->register_hooks();
 		}
+	}
+
+	/**
+	 * Load bundled translations.
+	 *
+	 * @return bool True when the text domain path is registered.
+	 */
+	public static function load_textdomain() {
+		return load_plugin_textdomain(
+			'od-ai-content',
+			false,
+			dirname( plugin_basename( OD_AI_CONTENT_FILE ) ) . '/languages'
+		);
 	}
 
 	/**

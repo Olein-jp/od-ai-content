@@ -33,9 +33,22 @@ required_vendor_files=(
 	"${plugin_slug}/vendor/erusev/parsedown/Parsedown.php"
 )
 
+required_translation_files=(
+	"${plugin_slug}/languages/od-ai-content.pot"
+	"${plugin_slug}/languages/od-ai-content-ja.po"
+	"${plugin_slug}/languages/od-ai-content-ja.mo"
+)
+
 for required_vendor_file in "${required_vendor_files[@]}"; do
 	if ! printf '%s\n' "${archive_entries}" | grep -Fx "${required_vendor_file}" >/dev/null; then
 		printf 'Required production dependency is missing: %s\n' "${required_vendor_file}" >&2
+		exit 1
+	fi
+done
+
+for required_translation_file in "${required_translation_files[@]}"; do
+	if ! printf '%s\n' "${archive_entries}" | grep -Fx "${required_translation_file}" >/dev/null; then
+		printf 'Required translation file is missing: %s\n' "${required_translation_file}" >&2
 		exit 1
 	fi
 done
@@ -66,6 +79,7 @@ required_headers=(
 	'Requires PHP:[[:space:]]+7\.4'
 	'Update URI:[[:space:]]+https://github\.com/Olein-jp/od-ai-content'
 	'Text Domain:[[:space:]]+od-ai-content'
+	'Domain Path:[[:space:]]+/languages'
 )
 
 for required_header in "${required_headers[@]}"; do

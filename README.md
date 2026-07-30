@@ -36,6 +36,12 @@ WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全�
 
 `llms.txt default` を有効にすると、個別設定のない既存・新規コンテンツを `llms.txt` に一括で含められます。初期値は従来どおり「含めない」です。投稿編集画面の「OD AI Content」インスペクターパネルで指定した対象・対象外は、この既定値より優先されます。
 
+## 言語
+
+プラグインの原文は英語です。日本語翻訳を `languages` ディレクトリへ同梱しているため、WordPress のサイト言語またはユーザー言語が日本語の場合は、管理画面とプラグインが生成する固定文言が日本語で表示されます。
+
+翻訳テンプレートは `languages/od-ai-content.pot` です。追加言語はこのテンプレートから `od-ai-content-{locale}.po` と `od-ai-content-{locale}.mo` を作成できます。
+
 ## ブロック変換
 
 次のコアブロックは、本文の意味を保持する専用処理または検証済みの変換処理を持ちます。
@@ -94,6 +100,7 @@ composer install
 npm run env:start
 composer lint
 npm run test:php
+composer i18n:verify
 ```
 
 環境を停止するには次を実行します。

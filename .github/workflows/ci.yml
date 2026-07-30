@@ -35,6 +35,9 @@ jobs:
       - name: Run PHPCS
         run: composer lint
 
+      - name: Verify bundled translations
+        run: composer i18n:verify
+
   integration:
     name: WordPress ${{ matrix.wordpress }} / PHP ${{ matrix.php }}
     runs-on: ubuntu-latest

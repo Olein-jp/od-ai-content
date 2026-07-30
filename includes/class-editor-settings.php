@@ -162,7 +162,6 @@ final class Editor_Settings {
 				'wp-data',
 				'wp-editor',
 				'wp-element',
-				'wp-i18n',
 				'wp-plugins',
 			),
 			OD_AI_CONTENT_VERSION,
@@ -183,7 +182,5 @@ final class Editor_Settings {
 				'panelTitle'           => __( 'OD AI Content', 'od-ai-content' ),
 			)
 		);
-
-		wp_set_script_translations( self::SCRIPT_HANDLE, 'od-ai-content' );
 	}
 }

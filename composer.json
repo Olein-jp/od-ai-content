@@ -22,6 +22,7 @@
     "sort-packages": true
   },
   "scripts": {
+    "i18n:verify": "php scripts/verify-translations.php",
     "lint": "phpcs",
     "format": "phpcbf",
     "package": "bash scripts/build-zip.sh",
