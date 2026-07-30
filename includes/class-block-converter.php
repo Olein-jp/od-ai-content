@@ -13,6 +13,18 @@ namespace Olein\OdAiContent;
 final class Block_Converter {
 
 	/**
+	 * Block names intentionally omitted from Markdown by default.
+	 *
+	 * @var string[]
+	 */
+	const EXCLUDED_BLOCKS = array(
+		'core/spacer',
+		'core/navigation',
+		'core/social-links',
+		'core/query',
+	);
+
+	/**
 	 * Block names whose rendered HTML conversion is an established path.
 	 *
 	 * @var string[]
@@ -135,7 +147,7 @@ final class Block_Converter {
 			return $custom;
 		}
 
-		if ( in_array( $name, array( 'core/spacer', 'core/navigation', 'core/social-links', 'core/query' ), true ) ) {
+		if ( in_array( $name, $this->get_excluded_block_names(), true ) ) {
 			$this->record_block( 'excluded_blocks', $name );
 			return '';
 		}
@@ -179,7 +191,7 @@ final class Block_Converter {
 		$html     = render_block( $block );
 		$markdown = $this->html_converter->convert( $html );
 
-		if ( '' !== trim( $markdown ) && ! in_array( $name, self::VERIFIED_HTML_BLOCKS, true ) ) {
+		if ( '' !== trim( $markdown ) && ! in_array( $name, $this->get_verified_html_block_names(), true ) ) {
 			$this->record_block( 'fallback_blocks', '' === $name ? 'unregistered' : $name );
 		}
 
@@ -211,6 +223,83 @@ final class Block_Converter {
 		}
 
 		$this->active_report[ $key ][] = (string) $name;
+	}
+
+	/**
+	 * Return normalized block names that should be intentionally omitted.
+	 *
+	 * Custom converters run before this registry, so an explicitly registered
+	 * converter can still retain Markdown for an excluded block.
+	 *
+	 * @since 0.5.0
+	 *
+	 * @return string[]
+	 */
+	private function get_excluded_block_names() {
+		/**
+		 * Filter block names that are intentionally omitted from Markdown.
+		 *
+		 * Registered names produce no Markdown and are reported as informational
+		 * exclusions instead of unverified HTML fallback warnings.
+		 *
+		 * @since 0.5.0
+		 *
+		 * @param string[]       $block_names Default excluded block names.
+		 * @param Block_Converter $converter  Converter instance.
+		 */
+		$block_names = apply_filters( 'od_ai_content_excluded_block_names', self::EXCLUDED_BLOCKS, $this );
+
+		return $this->normalize_block_names( $block_names );
+	}
+
+	/**
+	 * Return normalized block names whose HTML fallback has been verified.
+	 *
+	 * @since 0.5.0
+	 *
+	 * @return string[]
+	 */
+	private function get_verified_html_block_names() {
+		/**
+		 * Filter block names whose rendered HTML fallback has been verified.
+		 *
+		 * Registered names retain their converted Markdown without producing an
+		 * unverified HTML fallback warning.
+		 *
+		 * @since 0.5.0
+		 *
+		 * @param string[]        $block_names Verified block names.
+		 * @param Block_Converter $converter   Converter instance.
+		 */
+		$block_names = apply_filters( 'od_ai_content_verified_html_blocks', self::VERIFIED_HTML_BLOCKS, $this );
+
+		return $this->normalize_block_names( $block_names );
+	}
+
+	/**
+	 * Normalize a public block name registry.
+	 *
+	 * @param mixed $block_names Candidate block names.
+	 * @return string[]
+	 */
+	private function normalize_block_names( $block_names ) {
+		$normalized = array();
+
+		foreach ( (array) $block_names as $block_name ) {
+			if ( ! is_string( $block_name ) ) {
+				continue;
+			}
+
+			$block_name = trim( $block_name );
+
+			if ( ! preg_match( '/^[a-z0-9-]+\/[a-z0-9-]+$/', $block_name ) ) {
+				continue;
+			}
+
+			$normalized[] = $block_name;
+		}
+
+		return array_values( array_unique( $normalized ) );
 	}
 
 	/**

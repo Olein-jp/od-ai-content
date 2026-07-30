@@ -90,7 +90,32 @@ final class Admin_Diagnostics {
 			add_filter( "handle_bulk_actions-edit-{$post_type}", array( $this, 'handle_bulk_action' ), 10, 3 );
 		}
 
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_notices', array( $this, 'render_progress_notice' ) );
+	}
+
+	/**
+	 * Enqueue status colors only on configured post list screens.
+	 *
+	 * @return void
+	 */
+	public function enqueue_assets() {
+		$screen = get_current_screen();
+
+		if (
+			! $screen
+			|| 'edit' !== $screen->base
+			|| ! in_array( $screen->post_type, $this->settings->get_post_types(), true )
+		) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'od-ai-content-admin-diagnostics',
+			plugins_url( 'assets/admin-diagnostics.css', OD_AI_CONTENT_FILE ),
+			array(),
+			OD_AI_CONTENT_VERSION
+		);
 	}
 
 	/**
@@ -191,7 +216,7 @@ final class Admin_Diagnostics {
 	}
 
 	/**
-	 * Display persistent queue progress on configured post list screens.
+	 * Display queue progress and one-time completion results.
 	 *
 	 * @return void
 	 */
@@ -221,16 +246,57 @@ final class Admin_Diagnostics {
 			return;
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Counts were produced by the verified bulk action and only control notice text.
+		if ( isset( $_GET['od_ai_content_diagnostics_queued'] ) ) {
+			$queued  = absint( wp_unslash( $_GET['od_ai_content_diagnostics_queued'] ) );
+			$skipped = isset( $_GET['od_ai_content_diagnostics_skipped'] )
+				? absint( wp_unslash( $_GET['od_ai_content_diagnostics_skipped'] ) )
+				: 0;
+			$message = sprintf(
+				/* translators: 1: queued count, 2: skipped count. */
+				__( 'OD AI Content bulk diagnosis started — Queued: %1$d, Skipped: %2$d.', 'od-ai-content' ),
+				$queued,
+				$skipped
+			);
+
+			printf(
+				'<div class="notice notice-info"><p>%s</p></div>',
+				esc_html( $message )
+			);
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
 		$progress = $this->queue->get_progress();
 
-		if ( 0 === $progress['total'] ) {
+		if ( 'completed' === $progress['status'] ) {
+			$completed_progress = $this->queue->consume_completed_progress();
+
+			if ( null === $completed_progress ) {
+				return;
+			}
+
+			$notice_class = 0 < $completed_progress['failed'] ? 'notice-warning' : 'notice-success';
+			$message      = sprintf(
+				/* translators: 1: completed count, 2: failed count. */
+				__( 'OD AI Content bulk diagnosis completed — Completed: %1$d, Failed: %2$d.', 'od-ai-content' ),
+				$completed_progress['completed'],
+				$completed_progress['failed']
+			);
+
+			printf(
+				'<div class="notice %1$s"><p>%2$s</p></div>',
+				esc_attr( $notice_class ),
+				esc_html( $message )
+			);
+
 			return;
 		}
 
-		$notice_class = 0 < $progress['failed'] ? 'notice-warning' : 'notice-info';
-
-		if ( 'completed' === $progress['status'] && 0 === $progress['failed'] ) {
-			$notice_class = 'notice-success';
+		if (
+			0 === $progress['total']
+			|| ! in_array( $progress['status'], array( 'pending', 'running' ), true )
+		) {
+			return;
 		}
 
 		$message = sprintf(
@@ -243,8 +309,7 @@ final class Admin_Diagnostics {
 		);
 
 		printf(
-			'<div class="notice %1$s"><p>%2$s</p></div>',
-			esc_attr( $notice_class ),
+			'<div class="notice notice-info"><p>%s</p></div>',
 			esc_html( $message )
 		);
 	}

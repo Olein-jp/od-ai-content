@@ -1,0 +1,32 @@
+.od-ai-content-status {
+	align-items: center;
+	display: inline-flex;
+	font-weight: 600;
+	gap: 0.2em;
+}
+
+.od-ai-content-status .dashicons {
+	font-size: 18px;
+	height: 18px;
+	width: 18px;
+}
+
+.od-ai-content-status--normal {
+	color: #008a20;
+}
+
+.od-ai-content-status--warning {
+	color: #996800;
+}
+
+.od-ai-content-status--error {
+	color: #d63638;
+}
+
+.od-ai-content-status--excluded {
+	color: #646970;
+}
+
+.od-ai-content-status--not_diagnosed {
+	color: #2271b1;
+}

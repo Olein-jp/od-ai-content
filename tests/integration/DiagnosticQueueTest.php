@@ -187,4 +187,33 @@ class DiagnosticQueueTest extends WP_UnitTestCase {
 		$this->assertSame( array( $failed_id ), $progress['failed_ids'] );
 		$this->assertIsArray( $this->diagnostics->get_stored_result( $success_id ) );
 	}
+
+	/**
+	 * Completed progress is available once and then resets to idle.
+	 *
+	 * @return void
+	 */
+	public function test_completed_progress_is_consumed_once() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Completed.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+		$queue   = new Diagnostic_Queue( $this->diagnostics, $this->settings );
+
+		$queue->enqueue( array( $post_id ) );
+		$queue->process();
+
+		$completed = $queue->consume_completed_progress();
+
+		$this->assertIsArray( $completed );
+		$this->assertSame( 'completed', $completed['status'] );
+		$this->assertSame( 1, $completed['completed'] );
+		$this->assertNull( $queue->consume_completed_progress() );
+		$this->assertSame( 'idle', $queue->get_progress()['status'] );
+		$this->assertSame( 0, $queue->get_progress()['total'] );
+	}
 }

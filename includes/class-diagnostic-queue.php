@@ -273,6 +273,26 @@ final class Diagnostic_Queue {
 	}
 
 	/**
+	 * Return a completed queue once, then reset its display state.
+	 *
+	 * @since 0.5.0
+	 *
+	 * @return array|null Completed progress, or null when already consumed.
+	 */
+	public function consume_completed_progress() {
+		$state = $this->get_state();
+
+		if ( 'completed' !== $state['status'] || empty( $state['completion_notice_pending'] ) ) {
+			return null;
+		}
+
+		$progress = $this->get_progress();
+		$this->save_state( $this->get_default_state() );
+
+		return $progress;
+	}
+
+	/**
 	 * Remove scheduled workers and an abandoned lock on deactivation.
 	 *
 	 * @return void
@@ -308,9 +328,11 @@ final class Diagnostic_Queue {
 			return;
 		}
 
-		$state['status']     = 'completed';
-		$state['processing'] = 0;
-		$state['updated_at'] = time();
+		$should_notify                      = 'completed' !== $state['status'];
+		$state['status']                    = 'completed';
+		$state['processing']                = 0;
+		$state['updated_at']                = time();
+		$state['completion_notice_pending'] = $should_notify || ! empty( $state['completion_notice_pending'] );
 		$this->save_state( $state );
 	}
 
@@ -372,16 +394,17 @@ final class Diagnostic_Queue {
 			return $this->get_default_state();
 		}
 
-		$state               = wp_parse_args( $state, $this->get_default_state() );
-		$state['pending']    = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['pending'] ) ) ) );
-		$state['queued_ids'] = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['queued_ids'] ) ) ) );
-		$state['failed_ids'] = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['failed_ids'] ) ) ) );
-		$state['processing'] = absint( $state['processing'] );
-		$state['total']      = absint( $state['total'] );
-		$state['completed']  = absint( $state['completed'] );
-		$state['failed']     = absint( $state['failed'] );
-		$state['updated_at'] = absint( $state['updated_at'] );
-		$state['status']     = in_array( $state['status'], array( 'idle', 'pending', 'running', 'completed' ), true )
+		$state                              = wp_parse_args( $state, $this->get_default_state() );
+		$state['pending']                   = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['pending'] ) ) ) );
+		$state['queued_ids']                = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['queued_ids'] ) ) ) );
+		$state['failed_ids']                = array_values( array_unique( array_filter( array_map( 'absint', (array) $state['failed_ids'] ) ) ) );
+		$state['processing']                = absint( $state['processing'] );
+		$state['total']                     = absint( $state['total'] );
+		$state['completed']                 = absint( $state['completed'] );
+		$state['failed']                    = absint( $state['failed'] );
+		$state['updated_at']                = absint( $state['updated_at'] );
+		$state['completion_notice_pending'] = (bool) $state['completion_notice_pending'];
+		$state['status']                    = in_array( $state['status'], array( 'idle', 'pending', 'running', 'completed' ), true )
 			? $state['status']
 			: 'idle';
 
@@ -410,16 +433,17 @@ final class Diagnostic_Queue {
 	 */
 	private function get_default_state() {
 		return array(
-			'version'    => self::STATE_VERSION,
-			'status'     => 'idle',
-			'pending'    => array(),
-			'processing' => 0,
-			'queued_ids' => array(),
-			'total'      => 0,
-			'completed'  => 0,
-			'failed'     => 0,
-			'failed_ids' => array(),
-			'updated_at' => 0,
+			'version'                   => self::STATE_VERSION,
+			'status'                    => 'idle',
+			'pending'                   => array(),
+			'processing'                => 0,
+			'queued_ids'                => array(),
+			'total'                     => 0,
+			'completed'                 => 0,
+			'failed'                    => 0,
+			'failed_ids'                => array(),
+			'updated_at'                => 0,
+			'completion_notice_pending' => false,
 		);
 	}
 }

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.4.1\n"
+"Project-Id-Version: OD AI Content 0.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
-"POT-Creation-Date: 2026-07-30T10:02:40+00:00\n"
+"POT-Creation-Date: 2026-07-30T10:39:46+00:00\n"
 "PO-Revision-Date: 2026-07-30 15:25+0900\n"
 "Last-Translator: Olein Design\n"
 "Language-Team: Japanese\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: od-ai-content\n"
 
 #. Plugin Name of the plugin
-#: od-ai-content.php includes/class-admin-diagnostics.php:103
+#: od-ai-content.php includes/class-admin-diagnostics.php:128
 #: includes/class-admin-settings.php:114 includes/class-admin-settings.php:115
 #: includes/class-editor-settings.php:207
 msgid "OD AI Content"
@@ -34,20 +34,32 @@ msgstr ""
 msgid "Olein Design"
 msgstr "Olein Design"
 
-#: includes/class-admin-diagnostics.php:144
+#: includes/class-admin-diagnostics.php:169
 msgid "View Markdown"
 msgstr "Markdownを表示"
 
-#: includes/class-admin-diagnostics.php:156
+#: includes/class-admin-diagnostics.php:181
 msgid "Run OD AI Content diagnosis"
 msgstr "OD AI Contentの診断を実行"
 
-#: includes/class-admin-diagnostics.php:217
+#: includes/class-admin-diagnostics.php:242
 msgid "The bulk diagnosis request could not be verified."
 msgstr "一括診断リクエストを確認できませんでした。"
 
+#. translators: 1: queued count, 2: skipped count.
+#: includes/class-admin-diagnostics.php:257
+#, php-format
+msgid "OD AI Content bulk diagnosis started — Queued: %1$d, Skipped: %2$d."
+msgstr "OD AI Content一括診断を開始しました — 受付：%1$d、対象外：%2$d。"
+
+#. translators: 1: completed count, 2: failed count.
+#: includes/class-admin-diagnostics.php:281
+#, php-format
+msgid "OD AI Content bulk diagnosis completed — Completed: %1$d, Failed: %2$d."
+msgstr "OD AI Content一括診断が完了しました — 完了：%1$d、失敗：%2$d。"
+
 #. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
-#: includes/class-admin-diagnostics.php:238
+#: includes/class-admin-diagnostics.php:304
 #, php-format
 msgid ""
 "OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: "
@@ -96,12 +108,12 @@ msgstr ""
 "有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで"
 "含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
 
-#: includes/class-block-converter.php:312
+#: includes/class-block-converter.php:401
 #: includes/class-html-to-markdown.php:157
 msgid "Embedded content"
 msgstr "埋め込みコンテンツ"
 
-#: includes/class-block-converter.php:352
+#: includes/class-block-converter.php:441
 msgid "Media"
 msgstr "メディア"
 
@@ -238,8 +250,7 @@ msgid ""
 "Unsaved changes are not included in the diagnosis. Save the post to update "
 "the result."
 msgstr ""
-"未保存の変更は診断に含まれません。投稿を保存すると診断結果を更新し"
-"ます。"
+"未保存の変更は診断に含まれません。投稿を保存すると診断結果を更新します。"
 
 #: includes/class-editor-settings.php:195
 msgid "Short description"

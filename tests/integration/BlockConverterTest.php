@@ -301,4 +301,117 @@ BLOCKS;
 		$this->assertStringContainsString( 'Fallback', $markdown );
 		$this->assertStringContainsString( '[content](' . home_url( '/kept/' ) . ')', $markdown );
 	}
+
+	/**
+	 * Integrations can intentionally omit a block without a fallback warning.
+	 *
+	 * @return void
+	 */
+	public function test_registered_exclusion_is_informational() {
+		$content = '<!-- wp:example/card --><section><p>Omitted card.</p></section><!-- /wp:example/card -->';
+		$filter  = static function ( $block_names ) {
+			$block_names[] = '';
+			$block_names[] = 'invalid';
+			$block_names[] = 'example/card';
+			$block_names[] = 'example/card';
+
+			return $block_names;
+		};
+
+		add_filter( 'od_ai_content_excluded_block_names', $filter );
+		$report = $this->converter->convert_blocks_with_report( parse_blocks( $content ) );
+		remove_filter( 'od_ai_content_excluded_block_names', $filter );
+
+		$this->assertSame( '', $report['markdown'] );
+		$this->assertSame( array( 'example/card' ), $report['excluded_blocks'] );
+		$this->assertSame( array(), $report['fallback_blocks'] );
+	}
+
+	/**
+	 * Integrations can acknowledge a verified HTML fallback.
+	 *
+	 * @return void
+	 */
+	public function test_verified_html_fallback_retains_content_without_warning() {
+		$content = '<!-- wp:example/card --><section><p>Verified card.</p></section><!-- /wp:example/card -->';
+		$filter  = static function ( $block_names ) {
+			$block_names[] = 'example/card';
+
+			return $block_names;
+		};
+
+		add_filter( 'od_ai_content_verified_html_blocks', $filter );
+		$report = $this->converter->convert_blocks_with_report( parse_blocks( $content ) );
+		remove_filter( 'od_ai_content_verified_html_blocks', $filter );
+
+		$this->assertStringContainsString( 'Verified card.', $report['markdown'] );
+		$this->assertSame( array(), $report['excluded_blocks'] );
+		$this->assertSame( array(), $report['fallback_blocks'] );
+	}
+
+	/**
+	 * Unknown HTML fallbacks continue to produce a warning report.
+	 *
+	 * @return void
+	 */
+	public function test_unknown_html_fallback_remains_reported() {
+		$content = '<!-- wp:example/card --><section><p>Unknown card.</p></section><!-- /wp:example/card -->';
+		$report  = $this->converter->convert_blocks_with_report( parse_blocks( $content ) );
+
+		$this->assertStringContainsString( 'Unknown card.', $report['markdown'] );
+		$this->assertSame( array( 'example/card' ), $report['fallback_blocks'] );
+	}
+
+	/**
+	 * A custom converter takes precedence over an exclusion registry entry.
+	 *
+	 * @return void
+	 */
+	public function test_custom_converter_takes_precedence_over_registered_exclusion() {
+		$content           = '<!-- wp:example/card --><section><p>Card.</p></section><!-- /wp:example/card -->';
+		$custom            = new class() implements Block_Markdown_Converter {
+			/**
+			 * Support the example block.
+			 *
+			 * @param array $block Parsed block.
+			 * @return bool
+			 */
+			public function supports( array $block ) {
+				return 'example/card' === $block['blockName'];
+			}
+
+			/**
+			 * Return an explicit conversion.
+			 *
+			 * @param array           $block     Parsed block.
+			 * @param Block_Converter $converter Parent converter.
+			 * @return string
+			 */
+			public function convert( array $block, Block_Converter $converter ) {
+				unset( $block, $converter );
+
+				return 'Explicit card.';
+			}
+		};
+		$converters_filter = static function ( $converters ) use ( $custom ) {
+			$converters[] = $custom;
+
+			return $converters;
+		};
+		$excluded_filter   = static function ( $block_names ) {
+			$block_names[] = 'example/card';
+
+			return $block_names;
+		};
+
+		add_filter( 'od_ai_content_block_converters', $converters_filter );
+		add_filter( 'od_ai_content_excluded_block_names', $excluded_filter );
+		$report = $this->converter->convert_blocks_with_report( parse_blocks( $content ) );
+		remove_filter( 'od_ai_content_block_converters', $converters_filter );
+		remove_filter( 'od_ai_content_excluded_block_names', $excluded_filter );
+
+		$this->assertSame( 'Explicit card.', $report['markdown'] );
+		$this->assertSame( array(), $report['excluded_blocks'] );
+		$this->assertSame( array(), $report['fallback_blocks'] );
+	}
 }

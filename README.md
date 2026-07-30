@@ -102,6 +102,34 @@ add_filter(
 
 コンバーターが例外を送出する、または文字列以外を返した場合は、次のコンバーターまたは既定のHTMLフォールバックへ進みます。変換例外は `od_ai_content_block_converter_error` アクションで監視できます。
 
+### 意図的な除外と検証済みHTMLフォールバック
+
+サイト固有のブロックをMarkdownへ含めないことが仕様として決まっている場合は、`od_ai_content_excluded_block_names` フィルターへブロック名を追加できます。登録したブロックは出力されず、診断では警告ではなく情報扱いの「除外されたブロック」として記録されます。
+
+```php
+add_filter(
+	'od_ai_content_excluded_block_names',
+	static function ( $block_names ) {
+		$block_names[] = 'example/decorative-banner';
+		return $block_names;
+	}
+);
+```
+
+HTMLフォールバックの変換結果をサイト側で確認済みの場合は、`od_ai_content_verified_html_blocks` フィルターへブロック名を追加できます。Markdown出力は維持され、「未検証のHTMLフォールバック」の警告対象から外れます。
+
+```php
+add_filter(
+	'od_ai_content_verified_html_blocks',
+	static function ( $block_names ) {
+		$block_names[] = 'example/card';
+		return $block_names;
+	}
+);
+```
+
+どちらの登録も、実際の出力内容を確認したサイト開発者の判断と責任で行ってください。テーマやブロックプラグインの更新によってレンダリングHTMLが変わる可能性があるため、更新後はMarkdownプレビューを再確認する必要があります。専用コンバーターおよび `od_ai_content_block_markdown` はこれらの登録より先に評価されるため、明示的な変換処理で出力を保持できます。
+
 既存の低レベルフィルターも引き続き利用できます。
 
 - `od_ai_content_block_markdown`: 既定処理より前に、単一ブロックのMarkdownを直接返す
