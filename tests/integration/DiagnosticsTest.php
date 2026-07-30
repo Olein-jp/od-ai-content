@@ -220,6 +220,43 @@ BLOCKS;
 	}
 
 	/**
+	 * A completed block editor REST save stores a fresh diagnostic result.
+	 */
+	public function test_rest_post_save_refreshes_stored_result() {
+		$administrator = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id       = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Original.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+		$controller    = new Diagnostics_REST_Controller(
+			$this->diagnostics,
+			$this->settings,
+			new Content_Resolver( $this->settings ),
+			new Markdown_Url()
+		);
+		$request       = new WP_REST_Request( 'POST', '/wp/v2/posts/' . $post_id );
+
+		$controller->register_hooks();
+		wp_set_current_user( $administrator );
+
+		$request->set_body_params(
+			array(
+				'content' => '<!-- wp:paragraph --><p>Updated through REST.</p><!-- /wp:paragraph -->',
+			)
+		);
+
+		$response = rest_do_request( $request );
+		$stored   = $this->diagnostics->get_stored_result( $post_id );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertIsArray( $stored );
+		$this->assertSame( 'normal', $stored['status'] );
+		$this->assertSame( 'normal', $this->diagnostics->get_status( $post_id ) );
+	}
+
+	/**
 	 * Editor bookkeeping meta does not discard a fresh diagnostic result.
 	 *
 	 * @return void

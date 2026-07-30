@@ -8,6 +8,7 @@
 namespace Olein\OdAiContent;
 
 use WP_Error;
+use WP_Post;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -74,6 +75,36 @@ final class Diagnostics_REST_Controller extends WP_REST_Controller {
 	 */
 	public function register_hooks() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+
+		foreach ( $this->settings->get_post_types() as $post_type ) {
+			add_action( "rest_after_insert_{$post_type}", array( $this, 'refresh_after_post_save' ), 10, 3 );
+		}
+	}
+
+	/**
+	 * Store a fresh diagnosis after the block editor finishes saving a post.
+	 *
+	 * The core REST controller fires this action after post fields, terms, and
+	 * registered meta have been saved, so the stored result represents the
+	 * completed editor save.
+	 *
+	 * @param WP_Post         $post     Saved post.
+	 * @param WP_REST_Request $request Save request.
+	 * @param bool            $creating Whether the post was created.
+	 * @return void
+	 */
+	public function refresh_after_post_save( WP_Post $post, WP_REST_Request $request, $creating ) {
+		unset( $request, $creating );
+
+		if (
+			wp_is_post_revision( $post->ID )
+			|| wp_is_post_autosave( $post->ID )
+			|| ! in_array( $post->post_type, $this->settings->get_post_types(), true )
+		) {
+			return;
+		}
+
+		$this->diagnostics->diagnose( $post );
 	}
 
 	/**

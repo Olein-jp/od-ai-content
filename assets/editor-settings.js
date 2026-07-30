@@ -81,6 +81,7 @@
 
 			requestId = diagnosisRequestId.current + 1;
 			diagnosisRequestId.current = requestId;
+			setDiagnosis( null );
 			setIsLoading( true );
 			setError( '' );
 
@@ -107,6 +108,13 @@
 		}, [ editorState.postId ] );
 
 		useEffect( function () {
+			if ( ! previousSaving.current && editorState.isSaving ) {
+				diagnosisRequestId.current += 1;
+				setDiagnosis( null );
+				setIsLoading( false );
+				setError( '' );
+			}
+
 			if ( previousSaving.current && ! editorState.isSaving && editorState.didSave ) {
 				refreshAfterSave.current = true;
 			}
