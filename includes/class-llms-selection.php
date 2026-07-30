@@ -101,7 +101,7 @@ final class Llms_Selection {
 					type="checkbox"
 					name="od_ai_content_llms_selected"
 					value="1"
-					<?php checked( self::is_selected( $post->ID ) ); ?>
+					<?php checked( self::is_selected( $post->ID, $this->settings->is_llms_default_selected() ) ); ?>
 				/>
 				<?php esc_html_e( 'Include this content in llms.txt', 'od-ai-content' ); ?>
 			</label>
@@ -153,7 +153,7 @@ final class Llms_Selection {
 		if ( $selected ) {
 			update_post_meta( $post_id, self::META_KEY, '1' );
 		} else {
-			delete_post_meta( $post_id, self::META_KEY );
+			update_post_meta( $post_id, self::META_KEY, '0' );
 		}
 
 		$description = isset( $_POST['od_ai_content_llms_description'] )
@@ -169,13 +169,24 @@ final class Llms_Selection {
 	}
 
 	/**
-	 * Determine whether a post is explicitly selected.
+	 * Determine whether a post is selected, falling back to the configured default.
 	 *
-	 * @param int $post_id Post ID.
+	 * @param int  $post_id          Post ID.
+	 * @param bool $default_selected Selection used when the post has no individual setting.
 	 * @return bool
 	 */
-	public static function is_selected( $post_id ) {
-		return '1' === get_post_meta( $post_id, self::META_KEY, true );
+	public static function is_selected( $post_id, $default_selected = false ) {
+		$selection = get_post_meta( $post_id, self::META_KEY, true );
+
+		if ( '1' === $selection ) {
+			return true;
+		}
+
+		if ( '0' === $selection ) {
+			return false;
+		}
+
+		return (bool) $default_selected;
 	}
 
 	/**

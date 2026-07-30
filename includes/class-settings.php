@@ -34,8 +34,9 @@ final class Settings {
 		return wp_parse_args(
 			$settings,
 			array(
-				'enabled'    => 1,
-				'post_types' => array( 'post', 'page' ),
+				'enabled'               => 1,
+				'post_types'            => array( 'post', 'page' ),
+				'llms_default_selected' => 0,
 			)
 		);
 	}
@@ -49,6 +50,17 @@ final class Settings {
 		$settings = $this->get_all();
 
 		return ! empty( $settings['enabled'] );
+	}
+
+	/**
+	 * Determine whether content without an individual selection is included in llms.txt.
+	 *
+	 * @return bool
+	 */
+	public function is_llms_default_selected() {
+		$settings = $this->get_all();
+
+		return ! empty( $settings['llms_default_selected'] );
 	}
 
 	/**
@@ -133,8 +145,9 @@ final class Settings {
 			: array();
 
 		return array(
-			'enabled'    => empty( $input['enabled'] ) ? 0 : 1,
-			'post_types' => array_values( array_intersect( array_unique( $types ), $valid ) ),
+			'enabled'               => empty( $input['enabled'] ) ? 0 : 1,
+			'post_types'            => array_values( array_intersect( array_unique( $types ), $valid ) ),
+			'llms_default_selected' => empty( $input['llms_default_selected'] ) ? 0 : 1,
 		);
 	}
 }

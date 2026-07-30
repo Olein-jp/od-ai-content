@@ -54,32 +54,41 @@ final class Llms_Txt {
 	 * @return string
 	 */
 	public function generate() {
-		$posts = get_posts(
-			array(
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Explicit selection is intentionally stored in post meta.
-				'meta_key'       => Llms_Selection::META_KEY,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Only the explicit selected value is eligible.
-				'meta_value'     => '1',
-				'no_found_rows'  => true,
-				'orderby'        => array(
-					'menu_order' => 'ASC',
-					'title'      => 'ASC',
-					'ID'         => 'ASC',
-				),
-				'post_status'    => 'publish',
-				'post_type'      => $this->settings->get_post_types(),
-				'posts_per_page' => -1,
-			)
+		$default_selected = $this->settings->is_llms_default_selected();
+		$query_args       = array(
+			'no_found_rows'  => true,
+			'orderby'        => array(
+				'menu_order' => 'ASC',
+				'title'      => 'ASC',
+				'ID'         => 'ASC',
+			),
+			'post_status'    => 'publish',
+			'post_type'      => $this->settings->get_post_types(),
+			'posts_per_page' => -1,
 		);
 
+		if ( ! $default_selected ) {
+			$query_args = array_merge(
+				$query_args,
+				array(
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Explicit selection is intentionally stored in post meta.
+					'meta_key'   => Llms_Selection::META_KEY,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Only the explicit selected value is eligible.
+					'meta_value' => '1',
+				)
+			);
+		}
+
+		$posts = get_posts( $query_args );
+
 		/**
-		 * Filter explicitly selected posts before llms.txt entries are generated.
+		 * Filter selected or default-included posts before llms.txt entries are generated.
 		 *
 		 * Posts still need to pass the public Markdown eligibility check.
 		 *
 		 * @since 0.3.0
 		 *
-		 * @param WP_Post[] $posts Selected posts.
+		 * @param WP_Post[] $posts Candidate posts.
 		 */
 		$posts   = (array) apply_filters( 'od_ai_content_llms_txt_posts', $posts );
 		$entries = array();
@@ -87,7 +96,7 @@ final class Llms_Txt {
 		foreach ( $posts as $post ) {
 			if (
 				! $post instanceof WP_Post
-				|| ! Llms_Selection::is_selected( $post->ID )
+				|| ! Llms_Selection::is_selected( $post->ID, $default_selected )
 				|| ! $this->resolver->is_eligible( $post )
 			) {
 				continue;
@@ -109,7 +118,7 @@ final class Llms_Txt {
 		 * @since 0.3.0
 		 *
 		 * @param array[]   $entries Generated entries.
-		 * @param WP_Post[] $posts   Selected and queried posts.
+		 * @param WP_Post[] $posts   Candidate posts from the query.
 		 */
 		$entries = (array) apply_filters( 'od_ai_content_llms_txt_entries', $entries, $posts );
 		$lines   = array(

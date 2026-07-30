@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       OD AI Content
  * Description:       WordPressコンテンツをAIが取得・理解しやすいMarkdownとして配信します。
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 6.9
  * Requires PHP:      7.4
  * Author:            Olein Design
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OD_AI_CONTENT_VERSION', '0.1.0' );
+define( 'OD_AI_CONTENT_VERSION', '0.2.0' );
 define( 'OD_AI_CONTENT_FILE', __FILE__ );
 define( 'OD_AI_CONTENT_DIR', plugin_dir_path( __FILE__ ) );
 

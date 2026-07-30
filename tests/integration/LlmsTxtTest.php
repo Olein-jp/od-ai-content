@@ -121,6 +121,44 @@ class LlmsTxtTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The global default includes existing content without individual metadata.
+	 *
+	 * @return void
+	 */
+	public function test_default_selection_includes_existing_content() {
+		update_option(
+			Settings::OPTION_NAME,
+			array(
+				'enabled'               => 1,
+				'post_types'            => array( 'post', 'page' ),
+				'llms_default_selected' => 1,
+			)
+		);
+
+		$included_id = $this->create_post(
+			array(
+				'post_title' => 'Existing content',
+			),
+			'Existing content description.',
+			false
+		);
+		$excluded_id = $this->create_post(
+			array(
+				'post_title' => 'Individually excluded',
+			),
+			'This should not be listed.',
+			false
+		);
+		update_post_meta( $excluded_id, Llms_Selection::META_KEY, '0' );
+
+		$output = $this->generator()->generate();
+
+		$this->assertTrue( Llms_Selection::is_selected( $included_id, true ) );
+		$this->assertStringContainsString( 'Existing content', $output );
+		$this->assertStringNotContainsString( 'Individually excluded', $output );
+	}
+
+	/**
 	 * Published updates are reflected without a generated-file cache.
 	 *
 	 * @return void
@@ -217,6 +255,32 @@ class LlmsTxtTest extends WP_UnitTestCase {
 
 		$this->assertTrue( Llms_Selection::is_selected( $post_id ) );
 		$this->assertSame( 'Useful description.', Llms_Selection::get_custom_description( $post_id ) );
+	}
+
+	/**
+	 * An unchecked individual setting overrides the enabled global default.
+	 *
+	 * @return void
+	 */
+	public function test_authorized_user_can_save_explicit_exclusion() {
+		$administrator = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id       = self::factory()->post->create(
+			array(
+				'post_author' => $administrator,
+			)
+		);
+		$post          = get_post( $post_id );
+
+		wp_set_current_user( $administrator );
+
+		$_POST[ Llms_Selection::NONCE_NAME ]     = wp_create_nonce( Llms_Selection::NONCE_ACTION );
+		$_POST['od_ai_content_llms_description'] = '';
+
+		$selection = new Llms_Selection( new Settings() );
+		$selection->save( $post_id, $post );
+
+		$this->assertSame( '0', get_post_meta( $post_id, Llms_Selection::META_KEY, true ) );
+		$this->assertFalse( Llms_Selection::is_selected( $post_id, true ) );
 	}
 
 	/**

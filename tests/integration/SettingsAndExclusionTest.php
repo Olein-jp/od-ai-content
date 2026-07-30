@@ -36,6 +36,7 @@ class SettingsAndExclusionTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $settings->is_enabled() );
 		$this->assertSame( array( 'post', 'page' ), $settings->get_post_types() );
+		$this->assertFalse( $settings->is_llms_default_selected() );
 	}
 
 	/**
@@ -71,13 +72,15 @@ class SettingsAndExclusionTest extends WP_UnitTestCase {
 		$settings  = new Settings();
 		$sanitized = $settings->sanitize(
 			array(
-				'enabled'    => '1',
-				'post_types' => array( 'post', 'page', 'invalid<script>' ),
+				'enabled'               => '1',
+				'post_types'            => array( 'post', 'page', 'invalid<script>' ),
+				'llms_default_selected' => '1',
 			)
 		);
 
 		$this->assertSame( 1, $sanitized['enabled'] );
 		$this->assertSame( array( 'post', 'page' ), $sanitized['post_types'] );
+		$this->assertSame( 1, $sanitized['llms_default_selected'] );
 	}
 
 	/**
@@ -89,8 +92,9 @@ class SettingsAndExclusionTest extends WP_UnitTestCase {
 		update_option(
 			Settings::OPTION_NAME,
 			array(
-				'enabled'    => 1,
-				'post_types' => array( 'post' ),
+				'enabled'               => 1,
+				'post_types'            => array( 'post' ),
+				'llms_default_selected' => 0,
 			)
 		);
 
@@ -107,8 +111,9 @@ class SettingsAndExclusionTest extends WP_UnitTestCase {
 
 		$this->assertSame(
 			array(
-				'enabled'    => 1,
-				'post_types' => array( 'post' ),
+				'enabled'               => 1,
+				'post_types'            => array( 'post' ),
+				'llms_default_selected' => 0,
 			),
 			$result
 		);

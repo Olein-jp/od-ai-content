@@ -65,8 +65,9 @@ final class Admin_Settings {
 				'type'              => 'array',
 				'sanitize_callback' => array( $this->settings, 'sanitize' ),
 				'default'           => array(
-					'enabled'    => 1,
-					'post_types' => array( 'post', 'page' ),
+					'enabled'               => 1,
+					'post_types'            => array( 'post', 'page' ),
+					'llms_default_selected' => 0,
 				),
 			)
 		);
@@ -90,6 +91,14 @@ final class Admin_Settings {
 			'od_ai_content_post_types',
 			__( 'Post types', 'od-ai-content' ),
 			array( $this, 'render_post_types_field' ),
+			self::PAGE_SLUG,
+			'od_ai_content_output'
+		);
+
+		add_settings_field(
+			'od_ai_content_llms_default_selected',
+			__( 'llms.txt default', 'od-ai-content' ),
+			array( $this, 'render_llms_default_selected_field' ),
 			self::PAGE_SLUG,
 			'od_ai_content_output'
 		);
@@ -183,5 +192,27 @@ final class Admin_Settings {
 			</label>
 			<?php
 		}
+	}
+
+	/**
+	 * Render the default llms.txt selection field.
+	 *
+	 * @return void
+	 */
+	public function render_llms_default_selected_field() {
+		?>
+		<label>
+			<input
+				type="checkbox"
+				name="<?php echo esc_attr( Settings::OPTION_NAME ); ?>[llms_default_selected]"
+				value="1"
+				<?php checked( $this->settings->is_llms_default_selected() ); ?>
+			/>
+			<?php esc_html_e( 'Include content without an individual setting in llms.txt', 'od-ai-content' ); ?>
+		</label>
+		<p class="description">
+			<?php esc_html_e( 'When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default.', 'od-ai-content' ); ?>
+		</p>
+		<?php
 	}
 }
