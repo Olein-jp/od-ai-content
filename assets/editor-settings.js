@@ -24,6 +24,7 @@
 	var createElement = wp.element.createElement;
 	var registerPlugin = wp.plugins.registerPlugin;
 	var useEffect = wp.element.useEffect;
+	var useRef = wp.element.useRef;
 	var useState = wp.element.useState;
 	var useDispatch = wp.data.useDispatch;
 	var useSelect = wp.data.useSelect;
@@ -33,7 +34,9 @@
 				var editor = select( 'core/editor' );
 
 				return {
+					didSave: editor.didPostSaveRequestSucceed(),
 					isDirty: editor.isEditedPostDirty(),
+					isSaving: editor.isSavingPost(),
 					meta: editor.getEditedPostAttribute( 'meta' ) || {},
 					postId: editor.getCurrentPostId(),
 				};
@@ -52,6 +55,9 @@
 		var errorState = useState( '' );
 		var error = errorState[ 0 ];
 		var setError = errorState[ 1 ];
+		var diagnosisRequestId = useRef( 0 );
+		var previousSaving = useRef( false );
+		var refreshAfterSave = useRef( false );
 
 		if ( '1' === llmsSelectionValue ) {
 			isLlmsSelected = true;
@@ -67,10 +73,14 @@
 		}
 
 		function runDiagnosis() {
+			var requestId;
+
 			if ( ! editorState.postId ) {
 				return;
 			}
 
+			requestId = diagnosisRequestId.current + 1;
+			diagnosisRequestId.current = requestId;
 			setIsLoading( true );
 			setError( '' );
 
@@ -78,11 +88,17 @@
 				method: 'POST',
 				path: settings.diagnosisPath.replace( '%d', editorState.postId ),
 			} ).then( function ( result ) {
-				setDiagnosis( result );
+				if ( requestId === diagnosisRequestId.current ) {
+					setDiagnosis( result );
+				}
 			} ).catch( function ( requestError ) {
-				setError( requestError && requestError.message ? requestError.message : settings.diagnosisError );
+				if ( requestId === diagnosisRequestId.current ) {
+					setError( requestError && requestError.message ? requestError.message : settings.diagnosisError );
+				}
 			} ).finally( function () {
-				setIsLoading( false );
+				if ( requestId === diagnosisRequestId.current ) {
+					setIsLoading( false );
+				}
 			} );
 		}
 
@@ -90,13 +106,71 @@
 			runDiagnosis();
 		}, [ editorState.postId ] );
 
+		useEffect( function () {
+			if ( previousSaving.current && ! editorState.isSaving && editorState.didSave ) {
+				refreshAfterSave.current = true;
+			}
+
+			if ( refreshAfterSave.current && ! editorState.isSaving && ! editorState.isDirty ) {
+				refreshAfterSave.current = false;
+				runDiagnosis();
+			}
+
+			previousSaving.current = editorState.isSaving;
+		}, [ editorState.didSave, editorState.isDirty, editorState.isSaving ] );
+
+		function getCheckLabel( severity ) {
+			var labels = {
+				error: settings.errorCheckLabel,
+				info: settings.infoCheckLabel,
+				normal: settings.normalCheckLabel,
+				warning: settings.warningCheckLabel,
+			};
+
+			return labels[ severity ] || labels.info;
+		}
+
+		function renderCheckList( checks, key ) {
+			return createElement(
+				'ul',
+				{
+					className: 'od-ai-content-diagnosis__checks',
+					key: key,
+				},
+				checks.map( function ( check, index ) {
+					var severity = [ 'error', 'info', 'normal', 'warning' ].indexOf( check.severity ) >= 0
+						? check.severity
+						: 'info';
+
+					return createElement(
+						'li',
+						{
+							className: 'od-ai-content-diagnosis__check od-ai-content-diagnosis__check--' + severity,
+							key: check.code + '-' + index,
+						},
+						createElement(
+							'span',
+							{ className: 'od-ai-content-diagnosis__check-label' },
+							getCheckLabel( severity )
+						),
+						createElement( 'span', null, check.message )
+					);
+				} )
+			);
+		}
+
 		function renderDiagnosis() {
 			var elements = [
 				createElement( 'hr', { key: 'separator' } ),
 				createElement( 'h3', { key: 'title' }, settings.diagnosisTitle ),
 			];
+			var checks;
+			var issueChecks;
+			var infoChecks;
+			var normalChecks;
+			var status;
 
-			if ( editorState.isDirty ) {
+			if ( editorState.isDirty && ! editorState.isSaving ) {
 				elements.push(
 					createElement(
 						Notice,
@@ -129,26 +203,82 @@
 			}
 
 			if ( diagnosis ) {
+				checks = diagnosis.checks || [];
+				issueChecks = checks.filter( function ( check ) {
+					return 'error' === check.severity;
+				} ).concat( checks.filter( function ( check ) {
+					return 'warning' === check.severity;
+				} ) );
+				infoChecks = checks.filter( function ( check ) {
+					return 'info' === check.severity;
+				} );
+				normalChecks = checks.filter( function ( check ) {
+					return 'normal' === check.severity;
+				} );
+				status = [ 'error', 'excluded', 'normal', 'warning' ].indexOf( diagnosis.status ) >= 0
+					? diagnosis.status
+					: 'not-diagnosed';
+
 				elements.push(
 					createElement(
-						'p',
-						{ key: 'status' },
+						'div',
+						{
+							'aria-live': 'polite',
+							className: 'od-ai-content-diagnosis__status od-ai-content-diagnosis__status--' + status,
+							key: 'status',
+							role: 'status',
+						},
+						createElement(
+							'span',
+							{ className: 'od-ai-content-diagnosis__status-label' },
+							settings.diagnosisStatusLabel
+						),
 						createElement( 'strong', null, diagnosis.status_label )
 					)
 				);
 
-				if ( diagnosis.checks && diagnosis.checks.length ) {
+				if ( issueChecks.length ) {
 					elements.push(
 						createElement(
-							'ul',
-							{ key: 'checks' },
-							diagnosis.checks.map( function ( check, index ) {
-								return createElement(
-									'li',
-									{ key: check.code + '-' + index },
-									check.message
-								);
-							} )
+							'section',
+							{
+								className: 'od-ai-content-diagnosis__group',
+								key: 'issues',
+							},
+							createElement( 'h4', null, settings.issuesTitle ),
+							renderCheckList( issueChecks, 'issue-checks' )
+						)
+					);
+				}
+
+				if ( infoChecks.length ) {
+					elements.push(
+						createElement(
+							'section',
+							{
+								className: 'od-ai-content-diagnosis__group',
+								key: 'information',
+							},
+							createElement( 'h4', null, settings.informationTitle ),
+							renderCheckList( infoChecks, 'info-checks' )
+						)
+					);
+				}
+
+				if ( normalChecks.length ) {
+					elements.push(
+						createElement(
+							'details',
+							{
+								className: 'od-ai-content-diagnosis__passed',
+								key: 'passed',
+							},
+							createElement(
+								'summary',
+								null,
+								settings.passedChecksTitle + ' (' + normalChecks.length + ')'
+							),
+							renderCheckList( normalChecks, 'normal-checks' )
 						)
 					);
 				}
@@ -157,17 +287,17 @@
 					createElement(
 						'label',
 						{
+							className: 'od-ai-content-diagnosis__preview-label',
 							key: 'preview-label',
-							style: { display: 'block', fontWeight: 600, marginBottom: '8px' },
 						},
 						settings.previewLabel
 					),
 					createElement( 'textarea', {
 						'aria-label': settings.previewLabel,
+						className: 'od-ai-content-diagnosis__preview',
 						key: 'preview',
 						readOnly: true,
 						rows: 14,
-						style: { fontFamily: 'monospace', width: '100%' },
 						value: diagnosis.markdown || '',
 					} )
 				);
@@ -192,11 +322,11 @@
 				createElement(
 					Button,
 					{
-						disabled: isLoading,
+						className: 'od-ai-content-diagnosis__run',
+						disabled: editorState.isDirty || editorState.isSaving || isLoading,
 						isBusy: isLoading,
 						key: 'run',
 						onClick: runDiagnosis,
-						style: { display: 'block', marginTop: '12px' },
 						variant: 'secondary',
 					},
 					settings.runDiagnosisLabel

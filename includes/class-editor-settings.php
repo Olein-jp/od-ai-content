@@ -20,6 +20,13 @@ final class Editor_Settings {
 	const SCRIPT_HANDLE = 'od-ai-content-editor-settings';
 
 	/**
+	 * Editor style handle.
+	 *
+	 * @var string
+	 */
+	const STYLE_HANDLE = 'od-ai-content-editor-settings';
+
+	/**
 	 * Settings service.
 	 *
 	 * @var Settings
@@ -154,6 +161,13 @@ final class Editor_Settings {
 			return;
 		}
 
+		wp_enqueue_style(
+			self::STYLE_HANDLE,
+			plugins_url( 'assets/editor-settings.css', OD_AI_CONTENT_FILE ),
+			array( 'wp-components' ),
+			OD_AI_CONTENT_VERSION
+		);
+
 		wp_enqueue_script(
 			self::SCRIPT_HANDLE,
 			plugins_url( 'assets/editor-settings.js', OD_AI_CONTENT_FILE ),
@@ -175,19 +189,27 @@ final class Editor_Settings {
 			array(
 				'diagnosisError'       => __( 'The diagnosis could not be completed.', 'od-ai-content' ),
 				'diagnosisPath'        => '/od-ai-content/v1/posts/%d/diagnosis',
+				'diagnosisStatusLabel' => __( 'Diagnosis status', 'od-ai-content' ),
 				'diagnosisTitle'       => __( 'Markdown diagnosis', 'od-ai-content' ),
-				'dirtyNotice'          => __( 'Save the post before diagnosing to include the latest changes.', 'od-ai-content' ),
+				'dirtyNotice'          => __( 'Unsaved changes are not included in the diagnosis. Save the post to update the result.', 'od-ai-content' ),
 				'descriptionLabel'     => __( 'Short description', 'od-ai-content' ),
 				'descriptionMetaKey'   => Llms_Selection::DESCRIPTION_META_KEY,
+				'errorCheckLabel'      => __( 'Error', 'od-ai-content' ),
 				'exclusionLabel'       => __( 'Exclude this content from Markdown output', 'od-ai-content' ),
 				'exclusionMetaKey'     => Post_Exclusion::META_KEY,
+				'infoCheckLabel'       => __( 'Information', 'od-ai-content' ),
+				'informationTitle'     => __( 'Information', 'od-ai-content' ),
+				'issuesTitle'          => __( 'Items to review', 'od-ai-content' ),
 				'llmsDefaultSelected'  => $this->settings->is_llms_default_selected(),
 				'llmsSelectionLabel'   => __( 'Include this content in llms.txt', 'od-ai-content' ),
 				'llmsSelectionMetaKey' => Llms_Selection::META_KEY,
+				'normalCheckLabel'     => __( 'Passed', 'od-ai-content' ),
 				'panelTitle'           => __( 'OD AI Content', 'od-ai-content' ),
+				'passedChecksTitle'    => __( 'Passed checks', 'od-ai-content' ),
 				'previewLabel'         => __( 'Markdown preview', 'od-ai-content' ),
 				'runDiagnosisLabel'    => __( 'Run diagnosis again', 'od-ai-content' ),
 				'viewMarkdownLabel'    => __( 'Open published Markdown', 'od-ai-content' ),
+				'warningCheckLabel'    => __( 'Warning', 'od-ai-content' ),
 			)
 		);
 	}

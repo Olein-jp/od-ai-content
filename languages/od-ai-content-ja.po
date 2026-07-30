@@ -1,37 +1,59 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.4.0\n"
+"Project-Id-Version: OD AI Content 0.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
+"POT-Creation-Date: 2026-07-30T10:02:40+00:00\n"
+"PO-Revision-Date: 2026-07-30 15:25+0900\n"
 "Last-Translator: Olein Design\n"
 "Language-Team: Japanese\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-30T07:51:18+00:00\n"
-"PO-Revision-Date: 2026-07-30 15:25+0900\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-ai-content\n"
 
 #. Plugin Name of the plugin
-#: od-ai-content.php
-#: includes/class-admin-diagnostics.php:103
-#: includes/class-admin-settings.php:114
-#: includes/class-admin-settings.php:115
-#: includes/class-editor-settings.php:187
+#: od-ai-content.php includes/class-admin-diagnostics.php:103
+#: includes/class-admin-settings.php:114 includes/class-admin-settings.php:115
+#: includes/class-editor-settings.php:207
 msgid "OD AI Content"
 msgstr "OD AI Content"
 
 #. Description of the plugin
 #: od-ai-content.php
-msgid "Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand."
-msgstr "WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+msgid ""
+"Delivers WordPress content as Markdown that is easier for AI systems to "
+"retrieve and understand."
+msgstr ""
+"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
 
 #. Author of the plugin
 #: od-ai-content.php
 msgid "Olein Design"
 msgstr "Olein Design"
+
+#: includes/class-admin-diagnostics.php:144
+msgid "View Markdown"
+msgstr "Markdownを表示"
+
+#: includes/class-admin-diagnostics.php:156
+msgid "Run OD AI Content diagnosis"
+msgstr "OD AI Contentの診断を実行"
+
+#: includes/class-admin-diagnostics.php:217
+msgid "The bulk diagnosis request could not be verified."
+msgstr "一括診断リクエストを確認できませんでした。"
+
+#. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
+#: includes/class-admin-diagnostics.php:238
+#, php-format
+msgid ""
+"OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: "
+"%3$d, Failed: %4$d."
+msgstr ""
+"OD AI Content一括診断 — 待機中：%1$d、処理中：%2$d、完了：%3$d、失敗：%4$d。"
 
 #: includes/class-admin-settings.php:77
 msgid "Markdown output"
@@ -66,8 +88,13 @@ msgid "Include content without an individual setting in llms.txt"
 msgstr "個別設定のないコンテンツをllms.txtに含める"
 
 #: includes/class-admin-settings.php:214
-msgid "When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default."
-msgstr "有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
+msgid ""
+"When enabled, existing and newly published content in the selected post "
+"types is included by default. Individual content settings override this "
+"default."
+msgstr ""
+"有効にすると、選択した投稿タイプの既存および新規公開コンテンツがデフォルトで"
+"含まれます。コンテンツごとの設定は、このデフォルト設定より優先されます。"
 
 #: includes/class-block-converter.php:312
 #: includes/class-html-to-markdown.php:157
@@ -98,11 +125,11 @@ msgstr "この投稿を診断する権限がありません。"
 msgid "Normal"
 msgstr "正常"
 
-#: includes/class-diagnostics.php:232
+#: includes/class-diagnostics.php:232 includes/class-editor-settings.php:212
 msgid "Warning"
 msgstr "注意"
 
-#: includes/class-diagnostics.php:233
+#: includes/class-diagnostics.php:233 includes/class-editor-settings.php:197
 msgid "Error"
 msgstr "エラー"
 
@@ -182,51 +209,76 @@ msgstr "未検証のHTMLフォールバックで変換されたブロック：%s
 msgid "Unknown diagnostic result."
 msgstr "不明な診断結果です。"
 
-#: includes/class-editor-settings.php:68
+#: includes/class-editor-settings.php:75
 msgid "Whether this content is excluded from Markdown output."
 msgstr "このコンテンツをMarkdown出力から除外するかどうか。"
 
-#: includes/class-editor-settings.php:81
+#: includes/class-editor-settings.php:88
 msgid "Whether this content is included in llms.txt."
 msgstr "このコンテンツをllms.txtに含めるかどうか。"
 
-#: includes/class-editor-settings.php:94
+#: includes/class-editor-settings.php:101
 msgid "Short llms.txt description for this content."
 msgstr "このコンテンツのllms.txt用の短い説明。"
 
-#: includes/class-editor-settings.php:176
+#: includes/class-editor-settings.php:190
 msgid "The diagnosis could not be completed."
 msgstr "診断を完了できませんでした。"
 
-#: includes/class-editor-settings.php:178
+#: includes/class-editor-settings.php:192
+msgid "Diagnosis status"
+msgstr "診断結果"
+
+#: includes/class-editor-settings.php:193
 msgid "Markdown diagnosis"
 msgstr "Markdown診断"
 
-#: includes/class-editor-settings.php:179
-msgid "Save the post before diagnosing to include the latest changes."
-msgstr "最新の変更を診断へ反映するには、先に投稿を保存してください。"
+#: includes/class-editor-settings.php:194
+msgid ""
+"Unsaved changes are not included in the diagnosis. Save the post to update "
+"the result."
+msgstr ""
+"未保存の変更は診断に含まれません。投稿を保存すると診断結果を更新し"
+"ます。"
 
-#: includes/class-editor-settings.php:180
+#: includes/class-editor-settings.php:195
 msgid "Short description"
 msgstr "短い説明"
 
-#: includes/class-editor-settings.php:182
+#: includes/class-editor-settings.php:198
 msgid "Exclude this content from Markdown output"
 msgstr "このコンテンツをMarkdown出力から除外"
 
-#: includes/class-editor-settings.php:185
+#: includes/class-editor-settings.php:200
+#: includes/class-editor-settings.php:201
+msgid "Information"
+msgstr "情報"
+
+#: includes/class-editor-settings.php:202
+msgid "Items to review"
+msgstr "確認が必要な項目"
+
+#: includes/class-editor-settings.php:204
 msgid "Include this content in llms.txt"
 msgstr "このコンテンツをllms.txtに含める"
 
-#: includes/class-editor-settings.php:188
+#: includes/class-editor-settings.php:206
+msgid "Passed"
+msgstr "正常"
+
+#: includes/class-editor-settings.php:208
+msgid "Passed checks"
+msgstr "正常な項目"
+
+#: includes/class-editor-settings.php:209
 msgid "Markdown preview"
 msgstr "Markdownプレビュー"
 
-#: includes/class-editor-settings.php:189
+#: includes/class-editor-settings.php:210
 msgid "Run diagnosis again"
 msgstr "診断を再実行"
 
-#: includes/class-editor-settings.php:190
+#: includes/class-editor-settings.php:211
 msgid "Open published Markdown"
 msgstr "公開中のMarkdownを開く"
 
@@ -242,20 +294,5 @@ msgstr "Markdownコンテンツが見つかりません。"
 msgid "You are not allowed to change OD AI Content settings."
 msgstr "OD AI Contentの設定を変更する権限がありません。"
 
-#: includes/class-admin-diagnostics.php:144
-msgid "View Markdown"
-msgstr "Markdownを表示"
-
-#: includes/class-admin-diagnostics.php:156
-msgid "Run OD AI Content diagnosis"
-msgstr "OD AI Contentの診断を実行"
-
-#: includes/class-admin-diagnostics.php:217
-msgid "The bulk diagnosis request could not be verified."
-msgstr "一括診断リクエストを確認できませんでした。"
-
-#. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
-#: includes/class-admin-diagnostics.php:238
-#, php-format
-msgid "OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: %3$d, Failed: %4$d."
-msgstr "OD AI Content一括診断 — 待機中：%1$d、処理中：%2$d、完了：%3$d、失敗：%4$d。"
+#~ msgid "Save the post before diagnosing to include the latest changes."
+#~ msgstr "最新の変更を診断へ反映するには、先に投稿を保存してください。"

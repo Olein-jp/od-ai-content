@@ -378,4 +378,48 @@ BLOCKS;
 		$this->assertStringContainsString( 'REST preview.', $data['markdown'] );
 		$this->assertSame( ( new Markdown_Url() )->get( get_post( $post_id ) ), $data['markdown_url'] );
 	}
+
+	/**
+	 * REST diagnosis exposes actionable messages for error checks.
+	 *
+	 * @return void
+	 */
+	public function test_rest_diagnosis_exposes_actionable_error_messages() {
+		$administrator = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id       = self::factory()->post->create(
+			array(
+				'post_content' => '',
+				'post_status'  => 'publish',
+				'post_title'   => 'Empty REST diagnosis',
+			)
+		);
+		$controller    = new Diagnostics_REST_Controller(
+			$this->diagnostics,
+			$this->settings,
+			new Content_Resolver( $this->settings ),
+			new Markdown_Url()
+		);
+		$request       = new WP_REST_Request(
+			'POST',
+			'/od-ai-content/v1/posts/' . $post_id . '/diagnosis'
+		);
+		$request['id'] = $post_id;
+
+		wp_set_current_user( $administrator );
+
+		$data         = $controller->run_diagnosis( $request )->get_data();
+		$error_checks = array_values(
+			array_filter(
+				$data['checks'],
+				static function ( $check ) {
+					return 'error' === $check['severity'];
+				}
+			)
+		);
+
+		$this->assertSame( 'error', $data['status'] );
+		$this->assertNotEmpty( $error_checks );
+		$this->assertContains( 'body_empty', wp_list_pluck( $error_checks, 'code' ) );
+		$this->assertStringContainsString( 'empty', implode( ' ', wp_list_pluck( $error_checks, 'message' ) ) );
+	}
 }
