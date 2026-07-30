@@ -24,19 +24,24 @@ final class Plugin {
 		$settings        = new Settings();
 		$resolver        = new Content_Resolver( $settings );
 		$url             = new Markdown_Url();
+		$llms_txt        = new Llms_Txt( $resolver, $url, $settings );
 
-		$controller = new Response_Controller( $resolver, $document, $url );
-		$discovery  = new Discovery( $resolver, $url );
+		$controller          = new Response_Controller( $resolver, $document, $url );
+		$llms_txt_controller = new Llms_Txt_Controller( $llms_txt );
+		$discovery           = new Discovery( $resolver, $url );
 
 		$controller->register_hooks();
+		$llms_txt_controller->register_hooks();
 		$discovery->register_hooks();
 
 		if ( is_admin() ) {
 			$admin_settings = new Admin_Settings( $settings );
 			$post_exclusion = new Post_Exclusion( $settings );
+			$llms_selection = new Llms_Selection( $settings );
 
 			$admin_settings->register_hooks();
 			$post_exclusion->register_hooks();
+			$llms_selection->register_hooks();
 		}
 	}
 
@@ -47,6 +52,7 @@ final class Plugin {
 	 */
 	public static function activate() {
 		Response_Controller::register_rewrite_rule();
+		Llms_Txt_Controller::register_rewrite_rule();
 		flush_rewrite_rules();
 	}
 

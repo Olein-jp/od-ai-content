@@ -31,6 +31,9 @@ require_once OD_AI_CONTENT_DIR . 'includes/class-content-resolver.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-markdown-url.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-response-controller.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-discovery.php';
+require_once OD_AI_CONTENT_DIR . 'includes/class-llms-selection.php';
+require_once OD_AI_CONTENT_DIR . 'includes/class-llms-txt.php';
+require_once OD_AI_CONTENT_DIR . 'includes/class-llms-txt-controller.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-plugin.php';
 
 register_activation_hook( __FILE__, array( 'Olein\\OdAiContent\\Plugin', 'activate' ) );

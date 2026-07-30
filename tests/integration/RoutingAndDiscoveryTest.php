@@ -7,6 +7,8 @@
 
 use Olein\OdAiContent\Content_Resolver;
 use Olein\OdAiContent\Discovery;
+use Olein\OdAiContent\Llms_Txt;
+use Olein\OdAiContent\Llms_Txt_Controller;
 use Olein\OdAiContent\Markdown_Url;
 use Olein\OdAiContent\Post_Exclusion;
 use Olein\OdAiContent\Response_Controller;
@@ -41,6 +43,45 @@ class RoutingAndDiscoveryTest extends WP_UnitTestCase {
 		$this->assertSame(
 			'index.php?od_ai_content_markdown=1&od_ai_content_path=$matches[1]',
 			$wp_rewrite->extra_rules_top['^(.+?)/index\.html\.md/?$']
+		);
+	}
+
+	/**
+	 * Rewrite rule routes /llms.txt requests into the plugin query variable.
+	 *
+	 * @return void
+	 */
+	public function test_llms_txt_rewrite_rule_is_registered() {
+		global $wp_rewrite;
+
+		Llms_Txt_Controller::register_rewrite_rule();
+
+		$this->assertArrayHasKey( '^llms\.txt$', $wp_rewrite->extra_rules_top );
+		$this->assertSame(
+			'index.php?od_ai_content_llms_txt=1',
+			$wp_rewrite->extra_rules_top['^llms\.txt$']
+		);
+	}
+
+	/**
+	 * Llms.txt registers its public query variable and required Content-Type.
+	 *
+	 * @return void
+	 */
+	public function test_llms_txt_query_variable_and_content_type() {
+		$settings   = new Settings();
+		$resolver   = new Content_Resolver( $settings );
+		$url        = new Markdown_Url();
+		$document   = new Llms_Txt( $resolver, $url, $settings );
+		$controller = new Llms_Txt_Controller( $document );
+
+		$this->assertContains(
+			'od_ai_content_llms_txt',
+			$controller->register_query_vars( array() )
+		);
+		$this->assertSame(
+			'text/plain; charset=UTF-8',
+			$controller->get_response_headers()['Content-Type']
 		);
 	}
 
