@@ -15,6 +15,15 @@ use WP_Post;
 final class Markdown_Document {
 
 	/**
+	 * Version of the generated Markdown document schema.
+	 *
+	 * Increment when document structure changes in a cache-significant way.
+	 *
+	 * @var string
+	 */
+	const SCHEMA_VERSION = '1';
+
+	/**
 	 * Block converter.
 	 *
 	 * @var Block_Converter

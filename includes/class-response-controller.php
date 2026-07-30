@@ -34,16 +34,30 @@ final class Response_Controller {
 	private $url;
 
 	/**
+	 * HTTP cache validator.
+	 *
+	 * @var Markdown_Cache_Validator
+	 */
+	private $cache_validator;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param Content_Resolver  $resolver Content resolver.
-	 * @param Markdown_Document $document Document generator.
-	 * @param Markdown_Url      $url      URL generator.
+	 * @param Content_Resolver         $resolver        Content resolver.
+	 * @param Markdown_Document        $document        Document generator.
+	 * @param Markdown_Url             $url             URL generator.
+	 * @param Markdown_Cache_Validator $cache_validator HTTP cache validator.
 	 */
-	public function __construct( Content_Resolver $resolver, Markdown_Document $document, Markdown_Url $url ) {
-		$this->resolver = $resolver;
-		$this->document = $document;
-		$this->url      = $url;
+	public function __construct(
+		Content_Resolver $resolver,
+		Markdown_Document $document,
+		Markdown_Url $url,
+		Markdown_Cache_Validator $cache_validator
+	) {
+		$this->resolver        = $resolver;
+		$this->document        = $document;
+		$this->url             = $url;
+		$this->cache_validator = $cache_validator;
 	}
 
 	/**
@@ -99,15 +113,29 @@ final class Response_Controller {
 			$this->send_not_found();
 		}
 
-		$markdown  = $this->document->generate( $post );
-		$language  = get_bloginfo( 'language' );
-		$canonical = get_permalink( $post );
+		$markdown     = $this->document->generate( $post );
+		$language     = get_bloginfo( 'language' );
+		$canonical    = get_permalink( $post );
+		$headers      = array_merge(
+			array(
+				'Content-Type'     => 'text/markdown; charset=' . get_option( 'blog_charset', 'UTF-8' ),
+				'Content-Language' => sanitize_text_field( $language ),
+				'Link'             => '<' . esc_url_raw( $canonical ) . '>; rel="canonical"',
+				'X-Robots-Tag'     => 'noindex',
+			),
+			$this->cache_validator->get_headers( $post, $markdown )
+		);
+		$not_modified = $this->cache_validator->is_not_modified( $headers, $_SERVER );
 
-		status_header( 200 );
-		header( 'Content-Type: text/markdown; charset=' . get_option( 'blog_charset', 'UTF-8' ) );
-		header( 'Content-Language: ' . sanitize_text_field( $language ) );
-		header( 'Link: <' . esc_url_raw( $canonical ) . '>; rel="canonical"' );
-		header( 'X-Robots-Tag: noindex' );
+		status_header( $not_modified ? 304 : 200 );
+
+		foreach ( $headers as $name => $value ) {
+			header( $name . ': ' . $value );
+		}
+
+		if ( $not_modified ) {
+			exit;
+		}
 
 		/**
 		 * Fires immediately before a Markdown document is sent.

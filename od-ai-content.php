@@ -29,6 +29,7 @@ require_once OD_AI_CONTENT_DIR . 'includes/class-admin-settings.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-post-exclusion.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-content-resolver.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-markdown-url.php';
+require_once OD_AI_CONTENT_DIR . 'includes/class-markdown-cache-validator.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-response-controller.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-discovery.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-llms-selection.php';

@@ -35,6 +35,15 @@ class MarkdownDocumentTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Document schema version is explicit for cache invalidation.
+	 *
+	 * @return void
+	 */
+	public function test_document_schema_version_is_defined() {
+		$this->assertSame( '1', Markdown_Document::SCHEMA_VERSION );
+	}
+
+	/**
 	 * Core content structures and metadata are retained.
 	 *
 	 * @return void
