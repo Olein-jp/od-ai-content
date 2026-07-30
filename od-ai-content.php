@@ -4,7 +4,7 @@
  * Description:       WordPressコンテンツをAIが取得・理解しやすいMarkdownとして配信します。
  * Version:           0.1.0
  * Requires at least: 6.9
- * Requires PHP:      7.2.24
+ * Requires PHP:      7.4
  * Author:            Olein Design
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html

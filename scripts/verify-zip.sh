@@ -37,7 +37,7 @@ plugin_headers="$(unzip -p "${archive_path}" "${main_plugin}")"
 required_headers=(
 	'Plugin Name:[[:space:]]+OD AI Content'
 	'Requires at least:[[:space:]]+6\.9'
-	'Requires PHP:[[:space:]]+7\.2\.24'
+	'Requires PHP:[[:space:]]+7\.4'
 	'Text Domain:[[:space:]]+od-ai-content'
 )
 
