@@ -351,7 +351,8 @@ final class Diagnostics {
 			? $this->check( 'body_empty', 'error' )
 			: $this->check( 'body_present', 'normal' );
 
-		preg_match_all( '/^(#{1,6})\s+/m', $without_front_matter, $heading_matches );
+		$without_fenced_code = $this->remove_fenced_code_blocks( $without_front_matter );
+		preg_match_all( '/^(#{1,6})\s+/m', $without_fenced_code, $heading_matches );
 		$previous_level = 0;
 		$jumps          = array();
 
@@ -370,6 +371,49 @@ final class Diagnostics {
 			: $this->check( 'heading_hierarchy_jump', 'warning', array( 'jumps' => array_values( array_unique( $jumps ) ) ) );
 
 		return $checks;
+	}
+
+	/**
+	 * Remove fenced code blocks before inspecting Markdown structure.
+	 *
+	 * @param string $markdown Markdown document without front matter.
+	 * @return string
+	 */
+	private function remove_fenced_code_blocks( $markdown ) {
+		$lines         = preg_split( '/\R/', (string) $markdown );
+		$content_lines = array();
+		$fence_marker  = '';
+		$fence_length  = 0;
+
+		if ( ! is_array( $lines ) ) {
+			return (string) $markdown;
+		}
+
+		foreach ( $lines as $line ) {
+			if ( 0 === $fence_length ) {
+				if ( preg_match( '/^[ \t]{0,3}(`{3,}|~{3,})/', $line, $matches ) ) {
+					$fence_marker = substr( $matches[1], 0, 1 );
+					$fence_length = strlen( $matches[1] );
+					continue;
+				}
+
+				$content_lines[] = $line;
+				continue;
+			}
+
+			$closing_fence_pattern = '/^[ \t]{0,3}'
+				. preg_quote( $fence_marker, '/' )
+				. '{'
+				. $fence_length
+				. ',}[ \t]*$/';
+
+			if ( preg_match( $closing_fence_pattern, $line ) ) {
+				$fence_marker = '';
+				$fence_length = 0;
+			}
+		}
+
+		return implode( "\n", $content_lines );
 	}
 
 	/**

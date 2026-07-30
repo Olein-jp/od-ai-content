@@ -173,6 +173,59 @@ BLOCKS;
 	}
 
 	/**
+	 * Headings inside three- and four-backtick code fences are ignored.
+	 *
+	 * @return void
+	 */
+	public function test_heading_level_jump_ignores_fenced_code_blocks() {
+		$content = <<<'BLOCKS'
+<!-- wp:heading -->
+<h2 class="wp-block-heading">Section</h2>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">Subsection</h3>
+<!-- /wp:heading -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">First child</h4>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>## Example in a three-backtick fence</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Second child</h4>
+<!-- /wp:heading -->
+
+<!-- wp:code -->
+<pre class="wp-block-code"><code>```
+## Example in a four-backtick fence</code></pre>
+<!-- /wp:code -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">Third child</h4>
+<!-- /wp:heading -->
+BLOCKS;
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => $content,
+				'post_status'  => 'publish',
+				'post_title'   => 'Fenced code heading test',
+			)
+		);
+
+		$result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		$codes  = wp_list_pluck( $result['checks'], 'code' );
+
+		$this->assertStringContainsString( "```\n## Example in a three-backtick fence\n```", $result['markdown'] );
+		$this->assertStringContainsString( "````\n```\n## Example in a four-backtick fence\n````", $result['markdown'] );
+		$this->assertSame( 'normal', $result['status'] );
+		$this->assertNotContains( 'heading_hierarchy_jump', $codes );
+	}
+
+	/**
 	 * Excluded posts display the excluded status.
 	 *
 	 * @return void
