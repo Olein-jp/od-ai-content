@@ -3,13 +3,20 @@
   "description": "Development tooling for the OD AI Content WordPress plugin.",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.2.24"
+  },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-    "wp-coding-standards/wpcs": "^3.4"
+    "wp-coding-standards/wpcs": "^3.4",
+    "yoast/phpunit-polyfills": "^2.0.5"
   },
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "platform": {
+      "php": "7.2.24"
     },
     "sort-packages": true
   },

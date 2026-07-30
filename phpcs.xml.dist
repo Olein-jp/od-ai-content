@@ -3,6 +3,8 @@
 	<description>WordPress Coding Standards for the OD AI Content plugin.</description>
 
 	<file>od-ai-content.php</file>
+	<file>includes</file>
+	<file>tests</file>
 
 	<exclude-pattern>/node_modules/*</exclude-pattern>
 	<exclude-pattern>/vendor/*</exclude-pattern>
@@ -21,5 +23,9 @@
 				<element value="od-ai-content"/>
 			</property>
 		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase">
+		<exclude-pattern>includes/class-html-to-markdown.php</exclude-pattern>
 	</rule>
 </ruleset>
