@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ruleset name="OD AI Content">
+	<description>WordPress Coding Standards for the OD AI Content plugin.</description>
+
+	<file>od-ai-content.php</file>
+
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="od-ai-content"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>
