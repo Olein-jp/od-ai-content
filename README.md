@@ -32,9 +32,9 @@ https://example.com/blog/example/index.html.md
 
 WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全体の有効・無効と対象投稿タイプを設定できます。
 
-対象投稿の編集画面にある「OD AI Content」メタボックスでは、投稿単位で Markdown 出力から除外できます。除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。
+対象投稿のブロックエディターにある「OD AI Content」インスペクターパネルでは、投稿単位で Markdown 出力から除外できます。除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。
 
-`llms.txt default` を有効にすると、個別設定のない既存・新規コンテンツを `llms.txt` に一括で含められます。初期値は従来どおり「含めない」です。投稿編集画面の `llms.txt` メタボックスで指定した対象・対象外は、この既定値より優先されます。
+`llms.txt default` を有効にすると、個別設定のない既存・新規コンテンツを `llms.txt` に一括で含められます。初期値は従来どおり「含めない」です。投稿編集画面の「OD AI Content」インスペクターパネルで指定した対象・対象外は、この既定値より優先されます。
 
 ## ブロック変換
 

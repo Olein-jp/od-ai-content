@@ -10,7 +10,7 @@ namespace Olein\OdAiContent;
 use WP_Post;
 
 /**
- * Registers and saves the llms.txt selection meta box.
+ * Saves llms.txt selections submitted by the classic editor.
  */
 final class Llms_Selection {
 
@@ -64,61 +64,7 @@ final class Llms_Selection {
 	 * @return void
 	 */
 	public function register_hooks() {
-		add_action( 'add_meta_boxes', array( $this, 'register_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save' ), 10, 2 );
-	}
-
-	/**
-	 * Register the selection meta box for configured post types.
-	 *
-	 * @return void
-	 */
-	public function register_meta_boxes() {
-		foreach ( $this->settings->get_post_types() as $post_type ) {
-			add_meta_box(
-				'od-ai-content-llms-selection',
-				__( 'llms.txt', 'od-ai-content' ),
-				array( $this, 'render_meta_box' ),
-				$post_type,
-				'side',
-				'default'
-			);
-		}
-	}
-
-	/**
-	 * Render the selection fields.
-	 *
-	 * @param WP_Post $post Current post.
-	 * @return void
-	 */
-	public function render_meta_box( WP_Post $post ) {
-		wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME );
-		?>
-		<p>
-			<label>
-				<input
-					type="checkbox"
-					name="od_ai_content_llms_selected"
-					value="1"
-					<?php checked( self::is_selected( $post->ID, $this->settings->is_llms_default_selected() ) ); ?>
-				/>
-				<?php esc_html_e( 'Include this content in llms.txt', 'od-ai-content' ); ?>
-			</label>
-		</p>
-		<p>
-			<label for="od-ai-content-llms-description">
-				<?php esc_html_e( 'Short description', 'od-ai-content' ); ?>
-			</label>
-		</p>
-		<textarea
-			id="od-ai-content-llms-description"
-			name="od_ai_content_llms_description"
-			rows="4"
-			class="widefat"
-			maxlength="280"
-		><?php echo esc_textarea( self::get_custom_description( $post->ID ) ); ?></textarea>
-		<?php
 	}
 
 	/**

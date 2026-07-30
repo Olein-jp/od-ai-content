@@ -22,6 +22,7 @@ final class Plugin {
 		$block_converter = new Block_Converter( $html_converter );
 		$document        = new Markdown_Document( $block_converter );
 		$settings        = new Settings();
+		$editor_settings = new Editor_Settings( $settings );
 		$resolver        = new Content_Resolver( $settings );
 		$url             = new Markdown_Url();
 		$llms_txt        = new Llms_Txt( $resolver, $url, $settings );
@@ -36,6 +37,7 @@ final class Plugin {
 		$llms_txt_controller->register_hooks();
 		$discovery->register_hooks();
 		$github_updater->register();
+		$editor_settings->register_hooks();
 
 		if ( is_admin() ) {
 			$admin_settings = new Admin_Settings( $settings );

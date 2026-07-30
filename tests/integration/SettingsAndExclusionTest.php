@@ -7,6 +7,8 @@
 
 use Olein\OdAiContent\Post_Exclusion;
 use Olein\OdAiContent\Admin_Settings;
+use Olein\OdAiContent\Editor_Settings;
+use Olein\OdAiContent\Llms_Selection;
 use Olein\OdAiContent\Settings;
 
 /**
@@ -57,6 +59,44 @@ class SettingsAndExclusionTest extends WP_UnitTestCase {
 		$this->assertSame(
 			array( $settings, 'sanitize' ),
 			$wp_registered_settings[ Settings::OPTION_NAME ]['sanitize_callback']
+		);
+	}
+
+	/**
+	 * Editor fields are registered for REST-backed document settings.
+	 *
+	 * @return void
+	 */
+	public function test_editor_meta_fields_are_registered_for_rest() {
+		$editor_settings = new Editor_Settings( new Settings() );
+		$editor_settings->register_meta_fields();
+		$registered = get_registered_meta_keys( 'post', 'post' );
+
+		$this->assertTrue( post_type_supports( 'post', 'custom-fields' ) );
+		$this->assertTrue( $registered[ Post_Exclusion::META_KEY ]['show_in_rest'] );
+		$this->assertTrue( $registered[ Llms_Selection::META_KEY ]['show_in_rest'] );
+		$this->assertTrue( $registered[ Llms_Selection::DESCRIPTION_META_KEY ]['show_in_rest'] );
+		$this->assertSame( 'string', $registered[ Post_Exclusion::META_KEY ]['type'] );
+		$this->assertTrue( $registered[ Post_Exclusion::META_KEY ]['single'] );
+	}
+
+	/**
+	 * Editor meta sanitizers retain the established storage format.
+	 *
+	 * @return void
+	 */
+	public function test_editor_meta_values_are_sanitized() {
+		$editor_settings = new Editor_Settings( new Settings() );
+
+		$this->assertSame( '1', $editor_settings->sanitize_binary_value( '1' ) );
+		$this->assertSame( '0', $editor_settings->sanitize_binary_value( 'anything-else' ) );
+		$this->assertSame(
+			'Plain description',
+			$editor_settings->sanitize_description( '<strong>Plain</strong> description' )
+		);
+		$this->assertSame(
+			280,
+			strlen( $editor_settings->sanitize_description( str_repeat( 'a', 300 ) ) )
 		);
 	}
 
