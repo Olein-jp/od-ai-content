@@ -226,19 +226,53 @@ final class Html_To_Markdown {
 				continue;
 			}
 
-			$item = trim( $this->convert_children( $child ) );
-			$item = preg_replace( "/\n{2,}/", "\n", $item );
+			$item         = '';
+			$nested_lists = array();
 
-			if ( '' === $item ) {
+			foreach ( $child->childNodes as $item_child ) {
+				if (
+					$item_child instanceof DOMElement
+					&& in_array( strtolower( $item_child->tagName ), array( 'ul', 'ol' ), true )
+				) {
+					$nested_lists[] = trim( $this->convert_node( $item_child ) );
+					continue;
+				}
+
+				$item .= $this->convert_node( $item_child );
+			}
+
+			$item = trim( preg_replace( "/\n{2,}/", "\n", $item ) );
+
+			if ( '' === $item && empty( $nested_lists ) ) {
 				continue;
 			}
 
-			$prefix  = $ordered ? $index . '. ' : '- ';
-			$lines[] = $prefix . str_replace( "\n", "\n  ", $item );
+			$prefix = $ordered ? $index . '. ' : '- ';
+			$indent = str_repeat( ' ', strlen( $prefix ) );
+			$line   = $prefix . str_replace( "\n", "\n" . $indent, $item );
+
+			foreach ( $nested_lists as $nested_list ) {
+				if ( '' !== $nested_list ) {
+					$line .= "\n" . $this->indent_lines( $nested_list, $indent );
+				}
+			}
+
+			$lines[] = rtrim( $line );
 			++$index;
 		}
 
 		return empty( $lines ) ? '' : implode( "\n", $lines ) . "\n\n";
+	}
+
+	/**
+	 * Indent every line in nested block content.
+	 *
+	 * @param string $text   Text to indent.
+	 * @param string $indent Indentation string.
+	 * @return string
+	 */
+	private function indent_lines( $text, $indent ) {
+		return $indent . str_replace( "\n", "\n" . $indent, $text );
 	}
 
 	/**
@@ -327,7 +361,7 @@ final class Html_To_Markdown {
 			$body .= $this->convert_node( $child );
 		}
 
-		$markdown = '' === $summary ? '' : '**' . $summary . "**\n\n";
+		$markdown = '' === $summary ? '' : $summary . "\n\n";
 
 		return $markdown . trim( $body ) . "\n\n";
 	}

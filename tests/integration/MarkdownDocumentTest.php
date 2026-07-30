@@ -40,7 +40,7 @@ class MarkdownDocumentTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_document_schema_version_is_defined() {
-		$this->assertSame( '1', Markdown_Document::SCHEMA_VERSION );
+		$this->assertSame( '2', Markdown_Document::SCHEMA_VERSION );
 	}
 
 	/**

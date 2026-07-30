@@ -33,6 +33,56 @@ WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全�
 
 対象投稿の編集画面にある「OD AI Content」メタボックスでは、投稿単位で Markdown 出力から除外できます。除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。
 
+## ブロック変換
+
+次のコアブロックは、本文の意味を保持する専用処理または検証済みの変換処理を持ちます。
+
+- 見出し、段落、リスト、引用、表、コード、画像
+- `core/details`: summaryと開閉内コンテンツを常に出力
+- `core/embed`: 埋め込みURLを明示的なリンクとして出力
+- `core/buttons`: 各ボタンのラベルとリンク先を出力
+- `core/media-text`: 画像・メディアと内部コンテンツを意味順に出力
+- グループ、カラム、カバーなどのコンテナブロック
+
+入れ子のリストは階層と項目順を維持します。未対応ブロックは、レンダリングHTMLをMarkdownへ変換するフォールバックを利用するため、内容を黙って削除しません。
+
+`core/query`、ナビゲーション、ソーシャルリンク、スペーサーは既定では除外されます。`core/query` を記事本文として扱う場合は、以下のカスタムコンバーターAPIまたは既存の `od_ai_content_block_markdown` フィルターで明示的に変換できます。
+
+### 独自ブロックコンバーター
+
+独自ブロック用コンバーターは `Block_Markdown_Converter` を実装し、`od_ai_content_block_converters` フィルターへ登録します。登録順に `supports()` が評価され、最初に対応を表明して文字列を返したコンバーターが既定処理を置き換えます。
+
+```php
+use Olein\OdAiContent\Block_Converter;
+use Olein\OdAiContent\Block_Markdown_Converter;
+
+final class Example_Card_Converter implements Block_Markdown_Converter {
+
+	public function supports( array $block ) {
+		return 'example/card' === $block['blockName'];
+	}
+
+	public function convert( array $block, Block_Converter $converter ) {
+		return "## Card\n\n" . $converter->convert_blocks( $block['innerBlocks'] );
+	}
+}
+
+add_filter(
+	'od_ai_content_block_converters',
+	static function ( $converters ) {
+		$converters[] = new Example_Card_Converter();
+		return $converters;
+	}
+);
+```
+
+コンバーターが例外を送出する、または文字列以外を返した場合は、次のコンバーターまたは既定のHTMLフォールバックへ進みます。変換例外は `od_ai_content_block_converter_error` アクションで監視できます。
+
+既存の低レベルフィルターも引き続き利用できます。
+
+- `od_ai_content_block_markdown`: 既定処理より前に、単一ブロックのMarkdownを直接返す
+- `od_ai_content_converted_block_markdown`: HTMLフォールバック後のMarkdownを変更する
+
 ## 開発
 
 ```bash

@@ -21,7 +21,7 @@ final class Markdown_Document {
 	 *
 	 * @var string
 	 */
-	const SCHEMA_VERSION = '1';
+	const SCHEMA_VERSION = '2';
 
 	/**
 	 * Block converter.

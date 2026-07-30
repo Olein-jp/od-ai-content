@@ -22,6 +22,7 @@ define( 'OD_AI_CONTENT_FILE', __FILE__ );
 define( 'OD_AI_CONTENT_DIR', plugin_dir_path( __FILE__ ) );
 
 require_once OD_AI_CONTENT_DIR . 'includes/class-html-to-markdown.php';
+require_once OD_AI_CONTENT_DIR . 'includes/interface-block-markdown-converter.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-block-converter.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-markdown-document.php';
 require_once OD_AI_CONTENT_DIR . 'includes/class-settings.php';
