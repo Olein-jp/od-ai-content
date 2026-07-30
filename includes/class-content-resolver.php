@@ -15,6 +15,22 @@ use WP_Post;
 final class Content_Resolver {
 
 	/**
+	 * Plugin settings.
+	 *
+	 * @var Settings
+	 */
+	private $settings;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param Settings|null $settings Plugin settings.
+	 */
+	public function __construct( ?Settings $settings = null ) {
+		$this->settings = $settings ? $settings : new Settings();
+	}
+
+	/**
 	 * Resolve an original permalink path to a post.
 	 *
 	 * @param string $path URL path without the Markdown suffix.
@@ -49,17 +65,13 @@ final class Content_Resolver {
 			return false;
 		}
 
-		/**
-		 * Filter post types that may expose a Markdown alternative.
-		 *
-		 * @since 0.1.0
-		 *
-		 * @param string[] $post_types Allowed post type names.
-		 */
-		$post_types = (array) apply_filters( 'od_ai_content_post_types', array( 'post', 'page' ) );
+		if ( ! $this->settings->is_enabled() ) {
+			return false;
+		}
 
 		return 'publish' === $post->post_status
-			&& in_array( $post->post_type, $post_types, true )
-			&& '' === $post->post_password;
+			&& in_array( $post->post_type, $this->settings->get_post_types(), true )
+			&& '' === $post->post_password
+			&& ! Post_Exclusion::is_excluded( $post->ID );
 	}
 }

@@ -27,6 +27,12 @@ Markdown は次の URL で取得できます。
 https://example.com/blog/example/index.html.md
 ```
 
+## 設定
+
+WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全体の有効・無効と対象投稿タイプを設定できます。
+
+対象投稿の編集画面にある「OD AI Content」メタボックスでは、投稿単位で Markdown 出力から除外できます。除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。
+
 ## 開発
 
 ```bash

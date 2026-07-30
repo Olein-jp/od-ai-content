@@ -8,12 +8,24 @@
 use Olein\OdAiContent\Content_Resolver;
 use Olein\OdAiContent\Discovery;
 use Olein\OdAiContent\Markdown_Url;
+use Olein\OdAiContent\Post_Exclusion;
 use Olein\OdAiContent\Response_Controller;
+use Olein\OdAiContent\Settings;
 
 /**
  * Tests endpoint registration and HTML discovery.
  */
 class RoutingAndDiscoveryTest extends WP_UnitTestCase {
+
+	/**
+	 * Remove plugin settings after each test.
+	 *
+	 * @return void
+	 */
+	public function tear_down() {
+		delete_option( Settings::OPTION_NAME );
+		parent::tear_down();
+	}
 
 	/**
 	 * Rewrite rule routes index.html.md requests into plugin query variables.
@@ -76,6 +88,31 @@ class RoutingAndDiscoveryTest extends WP_UnitTestCase {
 			)
 		);
 
+		$this->go_to( get_permalink( $post_id ) );
+
+		$discovery = new Discovery( new Content_Resolver(), new Markdown_Url() );
+
+		ob_start();
+		$discovery->render_alternate_link();
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
+		$this->assertArrayNotHasKey( 'Link', $discovery->add_alternate_header( array() ) );
+	}
+
+	/**
+	 * Excluded content does not advertise a Markdown alternative.
+	 *
+	 * @return void
+	 */
+	public function test_excluded_content_is_not_advertised() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+			)
+		);
+
+		update_post_meta( $post_id, Post_Exclusion::META_KEY, '1' );
 		$this->go_to( get_permalink( $post_id ) );
 
 		$discovery = new Discovery( new Content_Resolver(), new Markdown_Url() );

@@ -6,11 +6,23 @@
  */
 
 use Olein\OdAiContent\Content_Resolver;
+use Olein\OdAiContent\Post_Exclusion;
+use Olein\OdAiContent\Settings;
 
 /**
  * Tests public content eligibility.
  */
 class ContentResolverTest extends WP_UnitTestCase {
+
+	/**
+	 * Remove plugin settings after each test.
+	 *
+	 * @return void
+	 */
+	public function tear_down() {
+		delete_option( Settings::OPTION_NAME );
+		parent::tear_down();
+	}
 
 	/**
 	 * Public posts and pages are eligible.
@@ -109,5 +121,85 @@ class ContentResolverTest extends WP_UnitTestCase {
 
 		remove_filter( 'od_ai_content_post_types', $filter );
 		unregister_post_type( 'book' );
+	}
+
+	/**
+	 * Global output can be disabled.
+	 *
+	 * @return void
+	 */
+	public function test_global_setting_disables_output() {
+		update_option(
+			Settings::OPTION_NAME,
+			array(
+				'enabled'    => 0,
+				'post_types' => array( 'post', 'page' ),
+			)
+		);
+
+		$post = get_post(
+			self::factory()->post->create(
+				array(
+					'post_status' => 'publish',
+				)
+			)
+		);
+
+		$this->assertFalse( ( new Content_Resolver() )->is_eligible( $post ) );
+	}
+
+	/**
+	 * Only configured post types are eligible.
+	 *
+	 * @return void
+	 */
+	public function test_only_configured_post_types_are_eligible() {
+		update_option(
+			Settings::OPTION_NAME,
+			array(
+				'enabled'    => 1,
+				'post_types' => array( 'page' ),
+			)
+		);
+
+		$post = get_post(
+			self::factory()->post->create(
+				array(
+					'post_status' => 'publish',
+					'post_type'   => 'post',
+				)
+			)
+		);
+		$page = get_post(
+			self::factory()->post->create(
+				array(
+					'post_status' => 'publish',
+					'post_type'   => 'page',
+				)
+			)
+		);
+
+		$resolver = new Content_Resolver();
+
+		$this->assertFalse( $resolver->is_eligible( $post ) );
+		$this->assertTrue( $resolver->is_eligible( $page ) );
+	}
+
+	/**
+	 * A post-level exclusion overrides otherwise eligible content.
+	 *
+	 * @return void
+	 */
+	public function test_post_level_exclusion_disables_output() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+			)
+		);
+		$post    = get_post( $post_id );
+
+		update_post_meta( $post_id, Post_Exclusion::META_KEY, '1' );
+
+		$this->assertFalse( ( new Content_Resolver() )->is_eligible( $post ) );
 	}
 }

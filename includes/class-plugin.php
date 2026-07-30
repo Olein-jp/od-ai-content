@@ -21,7 +21,8 @@ final class Plugin {
 		$html_converter  = new Html_To_Markdown();
 		$block_converter = new Block_Converter( $html_converter );
 		$document        = new Markdown_Document( $block_converter );
-		$resolver        = new Content_Resolver();
+		$settings        = new Settings();
+		$resolver        = new Content_Resolver( $settings );
 		$url             = new Markdown_Url();
 
 		$controller = new Response_Controller( $resolver, $document, $url );
@@ -29,6 +30,14 @@ final class Plugin {
 
 		$controller->register_hooks();
 		$discovery->register_hooks();
+
+		if ( is_admin() ) {
+			$admin_settings = new Admin_Settings( $settings );
+			$post_exclusion = new Post_Exclusion( $settings );
+
+			$admin_settings->register_hooks();
+			$post_exclusion->register_hooks();
+		}
 	}
 
 	/**
