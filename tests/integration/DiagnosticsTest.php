@@ -152,6 +152,93 @@ BLOCKS;
 	}
 
 	/**
+	 * H1 headings inside supported code fences do not count as document H1s.
+	 *
+	 * @return void
+	 */
+	public function test_h1_ignores_headings_inside_fenced_code_blocks() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Body.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => 'Fenced H1 test',
+			)
+		);
+		$filter  = static function ( $markdown ) {
+			return $markdown
+				. "\n```\n# Three-backtick H1\n###### Three-backtick H6\n```\n"
+				. "\n````\n```\n# Four-backtick H1\n###### Four-backtick H6\n````\n"
+				. "\n~~~markdown\n# Tilde H1\n###### Tilde H6\n~~~\n";
+		};
+
+		add_filter( 'od_ai_content_markdown_document', $filter );
+		$result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		remove_filter( 'od_ai_content_markdown_document', $filter );
+
+		$codes = wp_list_pluck( $result['checks'], 'code' );
+
+		$this->assertSame( 'normal', $result['status'] );
+		$this->assertContains( 'h1_valid', $codes );
+		$this->assertNotContains( 'h1_multiple', $codes );
+		$this->assertNotContains( 'heading_hierarchy_jump', $codes );
+	}
+
+	/**
+	 * H1 headings outside code fences still produce existing errors.
+	 *
+	 * @return void
+	 */
+	public function test_h1_outside_fenced_code_retains_existing_validation() {
+		$post_id            = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Body.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => 'Document title',
+			)
+		);
+		$multiple_h1_filter = static function ( $markdown ) {
+			return $markdown . "\n# Second H1\n";
+		};
+
+		add_filter( 'od_ai_content_markdown_document', $multiple_h1_filter );
+		$multiple_h1_result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		remove_filter( 'od_ai_content_markdown_document', $multiple_h1_filter );
+
+		$mismatched_h1_filter = static function ( $markdown ) {
+			return str_replace( '# Document title', '# Different title', $markdown );
+		};
+
+		add_filter( 'od_ai_content_markdown_document', $mismatched_h1_filter );
+		$mismatched_h1_result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		remove_filter( 'od_ai_content_markdown_document', $mismatched_h1_filter );
+
+		$this->assertContains( 'h1_multiple', wp_list_pluck( $multiple_h1_result['checks'], 'code' ) );
+		$this->assertContains( 'h1_title_mismatch', wp_list_pluck( $mismatched_h1_result['checks'], 'code' ) );
+	}
+
+	/**
+	 * A fenced code block remains valid body content.
+	 *
+	 * @return void
+	 */
+	public function test_fenced_code_block_counts_as_body_content() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:code --><pre class="wp-block-code"><code>echo &quot;Body&quot;;</code></pre><!-- /wp:code -->',
+				'post_status'  => 'publish',
+				'post_title'   => 'Code body test',
+			)
+		);
+
+		$result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		$codes  = wp_list_pluck( $result['checks'], 'code' );
+
+		$this->assertSame( 'normal', $result['status'] );
+		$this->assertContains( 'body_present', $codes );
+		$this->assertNotContains( 'body_empty', $codes );
+	}
+
+	/**
 	 * Heading level jumps produce a warning.
 	 *
 	 * @return void

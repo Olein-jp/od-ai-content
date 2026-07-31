@@ -331,7 +331,8 @@ final class Diagnostics {
 
 		$without_front_matter = preg_replace( '/\A---\R.*?\R---\R/s', '', $markdown, 1 );
 		$without_front_matter = is_string( $without_front_matter ) ? $without_front_matter : $markdown;
-		preg_match_all( '/^#(?!#)\s+(.+?)\s*$/m', $without_front_matter, $h1_matches );
+		$without_fenced_code  = $this->remove_fenced_code_blocks( $without_front_matter );
+		preg_match_all( '/^#(?!#)\s+(.+?)\s*$/m', $without_fenced_code, $h1_matches );
 		$h1_count = count( $h1_matches[1] );
 
 		if ( 0 === $h1_count ) {
@@ -351,7 +352,6 @@ final class Diagnostics {
 			? $this->check( 'body_empty', 'error' )
 			: $this->check( 'body_present', 'normal' );
 
-		$without_fenced_code = $this->remove_fenced_code_blocks( $without_front_matter );
 		preg_match_all( '/^(#{1,6})\s+/m', $without_fenced_code, $heading_matches );
 		$previous_level = 0;
 		$jumps          = array();
