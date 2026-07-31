@@ -132,6 +132,36 @@ BLOCKS;
 	}
 
 	/**
+	 * The filtered post title is evaluated once and reused throughout a document.
+	 *
+	 * @return void
+	 */
+	public function test_reuses_one_filtered_title_for_metadata_and_h1() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>本文です。</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => '元のタイトル',
+			)
+		);
+		$calls   = 0;
+		$filter  = static function ( $title ) use ( &$calls ) {
+			++$calls;
+
+			return 1 === $calls ? '日本語の診断タイトル' : $title . '（再評価）';
+		};
+
+		add_filter( 'the_title', $filter );
+		$markdown = $this->document->generate( get_post( $post_id ) );
+		remove_filter( 'the_title', $filter );
+
+		$this->assertSame( 1, $calls );
+		$this->assertStringContainsString( 'title: "日本語の診断タイトル"', $markdown );
+		$this->assertStringContainsString( '# 日本語の診断タイトル', $markdown );
+		$this->assertStringNotContainsString( '（再評価）', $markdown );
+	}
+
+	/**
 	 * Known navigation and decorative blocks are omitted.
 	 *
 	 * @return void

@@ -217,6 +217,108 @@ BLOCKS;
 	}
 
 	/**
+	 * H1 diagnosis reuses the title fixed during Markdown generation.
+	 *
+	 * @return void
+	 */
+	public function test_h1_diagnosis_does_not_reevaluate_filtered_post_title() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>本文です。</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => '元のタイトル',
+			)
+		);
+		$calls   = 0;
+		$filter  = static function ( $title ) use ( &$calls ) {
+			++$calls;
+
+			return 2 >= $calls ? 'llms.txtとは？日本語の診断タイトル' : $title . '（診断時に再評価）';
+		};
+
+		add_filter( 'the_title', $filter );
+		$result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		remove_filter( 'the_title', $filter );
+
+		$codes = wp_list_pluck( $result['checks'], 'code' );
+
+		$this->assertSame( 1, $calls );
+		$this->assertSame( 'normal', $result['status'] );
+		$this->assertStringContainsString( '# llms.txtとは？日本語の診断タイトル', $result['markdown'] );
+		$this->assertContains( 'h1_valid', $codes );
+		$this->assertNotContains( 'h1_title_mismatch', $codes );
+	}
+
+	/**
+	 * Semantically equivalent title markup and entities compare equally.
+	 *
+	 * @return void
+	 */
+	public function test_h1_title_comparison_normalizes_markup_and_entities() {
+		$post_id         = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>本文です。</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => '元のタイトル',
+			)
+		);
+		$title_filter    = static function () {
+			return '日本語 &amp; <em>WordPress</em>';
+		};
+		$document_filter = static function ( $markdown ) {
+			return str_replace(
+				'# 日本語 &amp; <em>WordPress</em>',
+				'# 日本語 & WordPress',
+				$markdown
+			);
+		};
+
+		add_filter( 'the_title', $title_filter );
+		add_filter( 'od_ai_content_markdown_document', $document_filter );
+		$result = $this->diagnostics->diagnose( get_post( $post_id ) );
+		remove_filter( 'od_ai_content_markdown_document', $document_filter );
+		remove_filter( 'the_title', $title_filter );
+
+		$codes = wp_list_pluck( $result['checks'], 'code' );
+
+		$this->assertSame( 'normal', $result['status'] );
+		$this->assertStringContainsString( '# 日本語 & WordPress', $result['markdown'] );
+		$this->assertContains( 'h1_valid', $codes );
+		$this->assertNotContains( 'h1_title_mismatch', $codes );
+	}
+
+	/**
+	 * Stored results from the previous diagnostic version are stale.
+	 *
+	 * @return void
+	 */
+	public function test_previous_diagnostic_result_version_is_stale() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>Body.</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+			)
+		);
+		$post    = get_post( $post_id );
+
+		update_post_meta(
+			$post_id,
+			Diagnostics::META_KEY,
+			array(
+				'version'           => 1,
+				'document_schema'   => Markdown_Document::SCHEMA_VERSION,
+				'post_modified_gmt' => $post->post_modified_gmt,
+				'status'            => 'normal',
+				'checks'            => array(),
+			)
+		);
+
+		$this->assertSame( 2, Diagnostics::RESULT_VERSION );
+		$this->assertNull( $this->diagnostics->get_stored_result( $post ) );
+		$this->assertSame( 'not_diagnosed', $this->diagnostics->get_status( $post ) );
+	}
+
+	/**
 	 * A fenced code block remains valid body content.
 	 *
 	 * @return void

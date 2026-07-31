@@ -27,7 +27,7 @@ final class Diagnostics {
 	 *
 	 * @var int
 	 */
-	const RESULT_VERSION = 1;
+	const RESULT_VERSION = 2;
 
 	/**
 	 * Required front matter keys.
@@ -90,12 +90,14 @@ final class Diagnostics {
 	public function diagnose( WP_Post $post ) {
 		$checks          = array();
 		$markdown        = '';
+		$document_title  = '';
 		$excluded_blocks = array();
 		$fallback_blocks = array();
 
 		try {
 			$generated       = $this->document->generate_with_report( $post );
 			$markdown        = (string) $generated['markdown'];
+			$document_title  = (string) $generated['title'];
 			$excluded_blocks = array_values( array_unique( (array) $generated['excluded_blocks'] ) );
 			$fallback_blocks = array_values( array_unique( (array) $generated['fallback_blocks'] ) );
 			$checks[]        = $this->check( 'markdown_generated', 'normal' );
@@ -113,7 +115,7 @@ final class Diagnostics {
 		}
 
 		if ( '' !== $markdown ) {
-			$checks = array_merge( $checks, $this->inspect_document( $post, $markdown ) );
+			$checks = array_merge( $checks, $this->inspect_document( $markdown, $document_title ) );
 		}
 
 		if ( ! empty( $excluded_blocks ) ) {
@@ -302,11 +304,11 @@ final class Diagnostics {
 	/**
 	 * Inspect the generated Markdown document.
 	 *
-	 * @param WP_Post $post     Source post.
-	 * @param string  $markdown Generated Markdown.
+	 * @param string $markdown       Generated Markdown.
+	 * @param string $document_title Title used to generate the document H1.
 	 * @return array[]
 	 */
-	private function inspect_document( WP_Post $post, $markdown ) {
+	private function inspect_document( $markdown, $document_title ) {
 		$checks = array();
 
 		if ( preg_match( '/\A---\R(.*?)\R---\R/s', $markdown, $front_matter_match ) ) {
@@ -339,7 +341,7 @@ final class Diagnostics {
 			$checks[] = $this->check( 'h1_missing', 'error' );
 		} elseif ( 1 < $h1_count ) {
 			$checks[] = $this->check( 'h1_multiple', 'error', array( 'count' => $h1_count ) );
-		} elseif ( trim( wp_strip_all_tags( $h1_matches[1][0] ) ) !== trim( wp_strip_all_tags( get_the_title( $post ) ) ) ) {
+		} elseif ( $this->normalize_title( $h1_matches[1][0] ) !== $this->normalize_title( $document_title ) ) {
 			$checks[] = $this->check( 'h1_title_mismatch', 'error' );
 		} else {
 			$checks[] = $this->check( 'h1_valid', 'normal' );
@@ -371,6 +373,20 @@ final class Diagnostics {
 			: $this->check( 'heading_hierarchy_jump', 'warning', array( 'jumps' => array_values( array_unique( $jumps ) ) ) );
 
 		return $checks;
+	}
+
+	/**
+	 * Normalize a title before comparing document structure.
+	 *
+	 * @param string $title Title text.
+	 * @return string
+	 */
+	private function normalize_title( $title ) {
+		$title      = html_entity_decode( (string) $title, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		$title      = wp_strip_all_tags( $title );
+		$normalized = preg_replace( '/\s+/u', ' ', $title );
+
+		return is_string( $normalized ) ? trim( $normalized ) : trim( $title );
 	}
 
 	/**

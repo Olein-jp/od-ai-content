@@ -55,7 +55,7 @@ final class Markdown_Document {
 	 * Generate a Markdown document with a block conversion report.
 	 *
 	 * @param WP_Post $post Post object.
-	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
+	 * @return array{markdown:string,title:string,excluded_blocks:string[],fallback_blocks:string[]}
 	 */
 	public function generate_with_report( WP_Post $post ) {
 		return $this->generate_document( $post, true );
@@ -66,13 +66,13 @@ final class Markdown_Document {
 	 *
 	 * @param WP_Post $post        Post object.
 	 * @param bool    $with_report Whether to collect a conversion report.
-	 * @return array{markdown:string,excluded_blocks:string[],fallback_blocks:string[]}
+	 * @return array{markdown:string,title:string,excluded_blocks:string[],fallback_blocks:string[]}
 	 */
 	private function generate_document( WP_Post $post, $with_report ) {
-		$metadata  = $this->get_metadata( $post );
+		$title     = get_the_title( $post );
+		$metadata  = $this->get_metadata( $post, $title );
 		$converted = $this->generate_content( $post, $with_report );
 		$content   = $converted['markdown'];
-		$title     = get_the_title( $post );
 		$document  = $this->serialize_front_matter( $metadata );
 		$document .= "\n# " . $title . "\n";
 
@@ -93,6 +93,7 @@ final class Markdown_Document {
 
 		return array(
 			'markdown'        => $document,
+			'title'           => $title,
 			'excluded_blocks' => $converted['excluded_blocks'],
 			'fallback_blocks' => $converted['fallback_blocks'],
 		);
@@ -139,14 +140,15 @@ final class Markdown_Document {
 	/**
 	 * Build document metadata.
 	 *
-	 * @param WP_Post $post Post object.
+	 * @param WP_Post $post  Post object.
+	 * @param string  $title Title used by the generated document.
 	 * @return array
 	 */
-	private function get_metadata( WP_Post $post ) {
+	private function get_metadata( WP_Post $post, $title ) {
 		$author = get_userdata( (int) $post->post_author );
 
 		$metadata = array(
-			'title'          => get_the_title( $post ),
+			'title'          => $title,
 			'canonical_url'  => get_permalink( $post ),
 			'language'       => get_bloginfo( 'language' ),
 			'date_published' => get_post_time( DATE_W3C, false, $post ),
