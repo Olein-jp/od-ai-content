@@ -1,6 +1,6 @@
 {
   "name": "od-ai-content",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "description": "Local development environment for the OD AI Content WordPress plugin.",
   "scripts": {
