@@ -1,11 +1,12 @@
 <?php
 /**
  * Plugin Name:       OD AI Content
- * Description:       Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand.
- * Version:           0.6.0
+ * Description:       Delivers public WordPress content as structured Markdown for retrieval and reuse by external tools.
+ * Version:           0.6.1
  * Requires at least: 6.9
  * Requires PHP:      7.4
- * Author:            Olein Design
+ * Author:            Koji Kuno
+ * Author URI:        https://olein-design.com
  * Update URI:        https://github.com/Olein-jp/od-ai-content
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OD_AI_CONTENT_VERSION', '0.6.0' );
+define( 'OD_AI_CONTENT_VERSION', '0.6.1' );
 define( 'OD_AI_CONTENT_FILE', __FILE__ );
 define( 'OD_AI_CONTENT_DIR', plugin_dir_path( __FILE__ ) );
 

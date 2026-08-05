@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.6.0\n"
+"Project-Id-Version: OD AI Content 0.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
 "POT-Creation-Date: 2026-08-05T10:14:00+09:00\n"
 "PO-Revision-Date: 2026-08-05 10:14+0900\n"
@@ -160,10 +160,11 @@ msgstr "OD AI Contentの設定を変更する権限がありません。"
 #. Description of the plugin
 #: od-ai-content.php
 msgid ""
-"Delivers WordPress content as Markdown that is easier for AI systems to "
-"retrieve and understand."
+"Delivers public WordPress content as structured Markdown for retrieval and "
+"reuse by external tools."
 msgstr ""
-"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+"WordPress の公開コンテンツを、外部ツールが取得・再利用できる構造化された "
+"Markdown として配信します。"
 
 #. Plugin Name of the plugin
 #: od-ai-content.php
@@ -172,5 +173,5 @@ msgstr "OD AI Content"
 
 #. Author of the plugin
 #: od-ai-content.php
-msgid "Olein Design"
-msgstr "Olein Design"
+msgid "Koji Kuno"
+msgstr "Koji Kuno"

@@ -2,6 +2,15 @@
 
 WordPress の公開コンテンツを、意味構造と出典情報を保った Markdown 代替表現として配信するプラグインです。
 
+## 目的と対象範囲
+
+OD AI Content は、Google 検索の AI 機能への掲載や検索順位の向上を目的とした SEO プラグインではありません。Google は、AI による概要や AI モードへの掲載について、従来の SEO の基本が引き続き有効であり、AI 向けのテキストファイルや特別なマークアップを追加する必要はないと説明しています。
+
+このプラグインの役割は、WordPress の公開コンテンツを、外部ツールが取得・解析・再利用しやすい Markdown 代替表現として提供することです。Markdown 版や `llms.txt` を実際に利用するかどうかは、それぞれのツールやサービスの実装に左右されます。
+
+- [AI 機能とウェブサイト — Google 検索セントラル](https://developers.google.com/search/docs/appearance/ai-features?hl=ja)
+- [The /llms.txt file](https://llmstxt.org/)
+
 ## MVP の機能
 
 - 投稿・固定ページの `index.html.md` URL

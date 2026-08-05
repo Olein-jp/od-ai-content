@@ -30,7 +30,7 @@ class InternationalizationTest extends WP_UnitTestCase {
 		$this->assertSame( 'od-ai-content', $headers['domain'] );
 		$this->assertSame( '/languages', $headers['domain_path'] );
 		$this->assertSame(
-			'Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand.',
+			'Delivers public WordPress content as structured Markdown for retrieval and reuse by external tools.',
 			$headers['description']
 		);
 	}

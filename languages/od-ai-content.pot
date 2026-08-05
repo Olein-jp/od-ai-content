@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.6.0\n"
+"Project-Id-Version: OD AI Content 0.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -156,8 +156,8 @@ msgstr ""
 #. Description of the plugin
 #: od-ai-content.php
 msgid ""
-"Delivers WordPress content as Markdown that is easier for AI systems to "
-"retrieve and understand."
+"Delivers public WordPress content as structured Markdown for retrieval and "
+"reuse by external tools."
 msgstr ""
 
 #. Plugin Name of the plugin
@@ -167,5 +167,5 @@ msgstr ""
 
 #. Author of the plugin
 #: od-ai-content.php
-msgid "Olein Design"
+msgid "Koji Kuno"
 msgstr ""
