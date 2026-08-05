@@ -2,65 +2,20 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.5.0\n"
+"Project-Id-Version: OD AI Content 0.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-30T10:39:46+00:00\n"
+"POT-Creation-Date: 2026-08-05T10:14:00+09:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.12.0\n"
+"X-Generator: GNU gettext\n"
 "X-Domain: od-ai-content\n"
 
-#. Plugin Name of the plugin
-#: od-ai-content.php
-#: includes/class-admin-diagnostics.php:128
-#: includes/class-admin-settings.php:114
-#: includes/class-admin-settings.php:115
-#: includes/class-editor-settings.php:207
-msgid "OD AI Content"
-msgstr ""
-
-#. Description of the plugin
-#: od-ai-content.php
-msgid "Delivers WordPress content as Markdown that is easier for AI systems to retrieve and understand."
-msgstr ""
-
-#. Author of the plugin
-#: od-ai-content.php
-msgid "Olein Design"
-msgstr ""
-
-#: includes/class-admin-diagnostics.php:169
+#: includes/class-admin-markdown.php:102
 msgid "View Markdown"
-msgstr ""
-
-#: includes/class-admin-diagnostics.php:181
-msgid "Run OD AI Content diagnosis"
-msgstr ""
-
-#: includes/class-admin-diagnostics.php:242
-msgid "The bulk diagnosis request could not be verified."
-msgstr ""
-
-#. translators: 1: queued count, 2: skipped count.
-#: includes/class-admin-diagnostics.php:257
-#, php-format
-msgid "OD AI Content bulk diagnosis started — Queued: %1$d, Skipped: %2$d."
-msgstr ""
-
-#. translators: 1: completed count, 2: failed count.
-#: includes/class-admin-diagnostics.php:281
-#, php-format
-msgid "OD AI Content bulk diagnosis completed — Completed: %1$d, Failed: %2$d."
-msgstr ""
-
-#. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
-#: includes/class-admin-diagnostics.php:304
-#, php-format
-msgid "OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: %3$d, Failed: %4$d."
 msgstr ""
 
 #: includes/class-admin-settings.php:77
@@ -96,7 +51,10 @@ msgid "Include content without an individual setting in llms.txt"
 msgstr ""
 
 #: includes/class-admin-settings.php:214
-msgid "When enabled, existing and newly published content in the selected post types is included by default. Individual content settings override this default."
+msgid ""
+"When enabled, existing and newly published content in the selected post "
+"types is included by default. Individual content settings override this "
+"default."
 msgstr ""
 
 #: includes/class-block-converter.php:401
@@ -106,112 +64,6 @@ msgstr ""
 
 #: includes/class-block-converter.php:441
 msgid "Media"
-msgstr ""
-
-#: includes/class-diagnostics-rest-controller.php:94
-msgid "Unique identifier for the post."
-msgstr ""
-
-#: includes/class-diagnostics-rest-controller.php:116
-msgid "The requested post was not found."
-msgstr ""
-
-#: includes/class-diagnostics-rest-controller.php:124
-msgid "This post type is not enabled for Markdown output."
-msgstr ""
-
-#: includes/class-diagnostics-rest-controller.php:132
-msgid "You are not allowed to diagnose this post."
-msgstr ""
-
-#: includes/class-diagnostics.php:231
-msgid "Normal"
-msgstr ""
-
-#: includes/class-diagnostics.php:232
-#: includes/class-editor-settings.php:212
-msgid "Warning"
-msgstr ""
-
-#: includes/class-diagnostics.php:233
-#: includes/class-editor-settings.php:197
-msgid "Error"
-msgstr ""
-
-#: includes/class-diagnostics.php:234
-msgid "Excluded"
-msgstr ""
-
-#: includes/class-diagnostics.php:235
-msgid "Not diagnosed"
-msgstr ""
-
-#: includes/class-diagnostics.php:424
-msgid "The Markdown document was generated successfully."
-msgstr ""
-
-#: includes/class-diagnostics.php:427
-msgid "The Markdown document could not be generated."
-msgstr ""
-
-#: includes/class-diagnostics.php:430
-msgid "Required front matter is present."
-msgstr ""
-
-#. translators: %s: comma-separated metadata field names.
-#: includes/class-diagnostics.php:435
-#, php-format
-msgid "Required front matter is missing: %s"
-msgstr ""
-
-#: includes/class-diagnostics.php:440
-msgid "The document has one H1 matching the post title."
-msgstr ""
-
-#: includes/class-diagnostics.php:443
-msgid "The document H1 is missing."
-msgstr ""
-
-#: includes/class-diagnostics.php:446
-msgid "The document has more than one H1."
-msgstr ""
-
-#: includes/class-diagnostics.php:449
-msgid "The document H1 does not match the post title."
-msgstr ""
-
-#: includes/class-diagnostics.php:452
-msgid "The Markdown body contains content."
-msgstr ""
-
-#: includes/class-diagnostics.php:455
-msgid "The Markdown body is empty."
-msgstr ""
-
-#: includes/class-diagnostics.php:458
-msgid "The heading hierarchy has no level jumps."
-msgstr ""
-
-#. translators: %s: comma-separated heading level transitions, such as 2-4.
-#: includes/class-diagnostics.php:463
-#, php-format
-msgid "The heading hierarchy contains level jumps: %s"
-msgstr ""
-
-#. translators: %s: comma-separated WordPress block names.
-#: includes/class-diagnostics.php:470
-#, php-format
-msgid "Blocks excluded by the default conversion policy: %s"
-msgstr ""
-
-#. translators: %s: comma-separated WordPress block names.
-#: includes/class-diagnostics.php:477
-#, php-format
-msgid "Blocks converted through the unverified HTML fallback: %s"
-msgstr ""
-
-#: includes/class-diagnostics.php:482
-msgid "Unknown diagnostic result."
 msgstr ""
 
 #: includes/class-editor-settings.php:75
@@ -227,64 +79,70 @@ msgid "Short llms.txt description for this content."
 msgstr ""
 
 #: includes/class-editor-settings.php:190
-msgid "The diagnosis could not be completed."
+msgid ""
+"Unsaved changes are not included in the preview. Save the post before "
+"generating a new preview."
 msgstr ""
 
-#: includes/class-editor-settings.php:192
-msgid "Diagnosis status"
-msgstr ""
-
-#: includes/class-editor-settings.php:193
-msgid "Markdown diagnosis"
-msgstr ""
-
-#: includes/class-editor-settings.php:194
-msgid "Unsaved changes are not included in the diagnosis. Save the post to update the result."
-msgstr ""
-
-#: includes/class-editor-settings.php:195
+#: includes/class-editor-settings.php:191
 msgid "Short description"
 msgstr ""
 
-#: includes/class-editor-settings.php:198
+#: includes/class-editor-settings.php:193
 msgid "Exclude this content from Markdown output"
 msgstr ""
 
-#: includes/class-editor-settings.php:200
-#: includes/class-editor-settings.php:201
-msgid "Information"
+#: includes/class-editor-settings.php:195
+msgid "Intentionally excluded blocks"
 msgstr ""
 
-#: includes/class-editor-settings.php:202
-msgid "Items to review"
+#: includes/class-editor-settings.php:196
+msgid "Blocks using unverified HTML fallback"
 msgstr ""
 
-#: includes/class-editor-settings.php:204
+#: includes/class-editor-settings.php:198
 msgid "Include this content in llms.txt"
 msgstr ""
 
-#: includes/class-editor-settings.php:206
-msgid "Passed"
+#: includes/class-editor-settings.php:201
+#: includes/class-markdown-preview-rest-controller.php:154
+msgid "The Markdown preview could not be generated."
 msgstr ""
 
-#: includes/class-editor-settings.php:208
-msgid "Passed checks"
-msgstr ""
-
-#: includes/class-editor-settings.php:209
+#: includes/class-editor-settings.php:202
 msgid "Markdown preview"
 msgstr ""
 
-#: includes/class-editor-settings.php:210
-msgid "Run diagnosis again"
+#: includes/class-editor-settings.php:204
+msgid "Markdown preview and conversion report"
 msgstr ""
 
-#: includes/class-editor-settings.php:211
+#: includes/class-editor-settings.php:205
+msgid "Generate Markdown preview"
+msgstr ""
+
+#: includes/class-editor-settings.php:206
 msgid "Open published Markdown"
 msgstr ""
 
 #: includes/class-llms-txt.php:132
 msgid "Content"
+msgstr ""
+
+#: includes/class-markdown-preview-rest-controller.php:94
+msgid "Unique identifier for the post."
+msgstr ""
+
+#: includes/class-markdown-preview-rest-controller.php:116
+msgid "The requested post was not found."
+msgstr ""
+
+#: includes/class-markdown-preview-rest-controller.php:124
+msgid "This post type is not enabled for Markdown output."
+msgstr ""
+
+#: includes/class-markdown-preview-rest-controller.php:132
+msgid "You are not allowed to preview this post."
 msgstr ""
 
 #: includes/class-response-controller.php:165
@@ -293,4 +151,21 @@ msgstr ""
 
 #: includes/class-settings.php:134
 msgid "You are not allowed to change OD AI Content settings."
+msgstr ""
+
+#. Description of the plugin
+#: od-ai-content.php
+msgid ""
+"Delivers WordPress content as Markdown that is easier for AI systems to "
+"retrieve and understand."
+msgstr ""
+
+#. Plugin Name of the plugin
+#: od-ai-content.php
+msgid "OD AI Content"
+msgstr ""
+
+#. Author of the plugin
+#: od-ai-content.php
+msgid "Olein Design"
 msgstr ""

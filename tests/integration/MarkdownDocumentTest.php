@@ -162,6 +162,58 @@ BLOCKS;
 	}
 
 	/**
+	 * Standard generation owns required front matter and exactly one title H1.
+	 *
+	 * @return void
+	 */
+	public function test_standard_document_has_required_metadata_and_one_title_h1() {
+		$post_id  = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>本文です。</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => 'Guaranteed title',
+			)
+		);
+		$markdown = $this->document->generate( get_post( $post_id ) );
+
+		$this->assertMatchesRegularExpression( '/\A---\R(.*?)\R---\R/s', $markdown );
+
+		foreach ( array( 'title', 'canonical_url', 'language', 'date_published', 'date_modified', 'content_type' ) as $key ) {
+			$this->assertMatchesRegularExpression( '/^' . preg_quote( $key, '/' ) . ':\s*\S+/m', $markdown );
+		}
+
+		$without_front_matter = preg_replace( '/\A---\R.*?\R---\R/s', '', $markdown, 1 );
+		preg_match_all( '/^#(?!#)\s+(.+?)\s*$/m', $without_front_matter, $h1_matches );
+
+		$this->assertSame( array( 'Guaranteed title' ), $h1_matches[1] );
+	}
+
+	/**
+	 * Final document filters may intentionally change standard document structure.
+	 *
+	 * @return void
+	 */
+	public function test_final_document_filter_remains_responsible_for_its_structure_changes() {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_content' => '<!-- wp:paragraph --><p>本文です。</p><!-- /wp:paragraph -->',
+				'post_status'  => 'publish',
+				'post_title'   => 'Standard title',
+			)
+		);
+		$filter  = static function ( $document ) {
+			return $document . "\n# Extension-owned H1\n";
+		};
+
+		add_filter( 'od_ai_content_markdown_document', $filter );
+		$markdown = $this->document->generate( get_post( $post_id ) );
+		remove_filter( 'od_ai_content_markdown_document', $filter );
+
+		$this->assertSame( 1, substr_count( $markdown, "\n# Standard title\n" ) );
+		$this->assertStringContainsString( '# Extension-owned H1', $markdown );
+	}
+
+	/**
 	 * Known navigation and decorative blocks are omitted.
 	 *
 	 * @return void

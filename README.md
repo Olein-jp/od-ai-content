@@ -16,9 +16,8 @@ WordPress の公開コンテンツを、意味構造と出典情報を保った 
 - カスタム投稿タイプ、ブロック変換、メタデータ、最終文書のフィルター
 - 公開コンテンツの Markdown URL と短い説明を一覧化するルートの `/llms.txt`
 - `llms.txt` への掲載を全体の既定値または投稿単位で制御
-- 投稿一覧で Markdown 診断状態（正常・注意・エラー・除外・未診断）と公開可能な Markdown へのリンクを確認
-- 選択した複数投稿を、WordPress Cron による分割バックグラウンド処理で一括診断
-- 投稿編集画面で診断結果、変換上の注意、Markdown プレビューを確認
+- 投稿一覧から公開可能な Markdown へのリンクを確認
+- 投稿編集画面で、必要なときだけ Markdown プレビューと変換上の注意を確認
 - GitHubのリリースタグを利用したWordPress標準のプラグイン更新通知
 
 通常ページが次の場合、
@@ -42,8 +41,10 @@ WordPress 管理画面の「設定 → OD AI Content」で、Markdown 出力全�
 - Markdown 出力からの除外
 - `llms.txt` への掲載・非掲載
 - `llms.txt` に掲載する短い説明（最大280文字）
-- Markdown の診断結果とプレビュー
+- 保存済み内容の Markdown プレビュー
 - 除外されたブロックと、未検証の HTML フォールバックで変換されたブロック
+
+Markdownプレビューは自動生成されません。最新の編集内容を保存してから「Markdownプレビューを生成」を押すと、その時点のMarkdownと変換レポートを確認できます。プレビュー結果は投稿メタへ保存されません。
 
 Markdown 出力から除外されたコンテンツは Markdown URL が `404` を返し、元HTMLにも Markdown版のalternate情報を出力しません。また、`llms.txt` の掲載候補からも除外されます。
 
@@ -104,7 +105,7 @@ add_filter(
 
 ### 意図的な除外と検証済みHTMLフォールバック
 
-サイト固有のブロックをMarkdownへ含めないことが仕様として決まっている場合は、`od_ai_content_excluded_block_names` フィルターへブロック名を追加できます。登録したブロックは出力されず、診断では警告ではなく情報扱いの「除外されたブロック」として記録されます。
+サイト固有のブロックをMarkdownへ含めないことが仕様として決まっている場合は、`od_ai_content_excluded_block_names` フィルターへブロック名を追加できます。登録したブロックは出力されず、プレビューの変換レポートに「意図的に除外されたブロック」として表示されます。
 
 ```php
 add_filter(
@@ -134,6 +135,9 @@ add_filter(
 
 - `od_ai_content_block_markdown`: 既定処理より前に、単一ブロックのMarkdownを直接返す
 - `od_ai_content_converted_block_markdown`: HTMLフォールバック後のMarkdownを変更する
+- `od_ai_content_markdown_document`: front matterとH1を含む最終Markdown文書を変更する
+
+プラグイン標準の生成処理は、必須front matter、単一H1、投稿タイトルとの同期を保証します。`od_ai_content_markdown_document` はこの生成後に適用されるため、このフィルターでfront matterやH1を変更する場合は、拡張側で最終文書の構造を保証してください。
 
 ## 開発
 

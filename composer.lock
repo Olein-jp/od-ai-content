@@ -64,16 +64,16 @@
         },
         {
             "name": "inc2734/wp-github-plugin-updater",
-            "version": "3.1.16",
+            "version": "3.1.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/inc2734/wp-github-plugin-updater.git",
-                "reference": "412ce8dcd4f6ab264fd4ad9fe590147323c41d55"
+                "reference": "697604eec2ccfebf3cde87afb3836ab892f889f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/inc2734/wp-github-plugin-updater/zipball/412ce8dcd4f6ab264fd4ad9fe590147323c41d55",
-                "reference": "412ce8dcd4f6ab264fd4ad9fe590147323c41d55",
+                "url": "https://api.github.com/repos/inc2734/wp-github-plugin-updater/zipball/697604eec2ccfebf3cde87afb3836ab892f889f3",
+                "reference": "697604eec2ccfebf3cde87afb3836ab892f889f3",
                 "shasum": ""
             },
             "require": {
@@ -105,9 +105,9 @@
             "description": "A library for WordPress that automatic plugin updater with GitHub API.",
             "support": {
                 "issues": "https://github.com/inc2734/wp-github-plugin-updater/issues",
-                "source": "https://github.com/inc2734/wp-github-plugin-updater/tree/3.1.16"
+                "source": "https://github.com/inc2734/wp-github-plugin-updater/tree/3.1.17"
             },
-            "time": "2025-03-31T10:54:25+00:00"
+            "time": "2026-08-03T02:14:44+00:00"
         }
     ],
     "packages-dev": [

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: OD AI Content 0.5.0\n"
+"Project-Id-Version: OD AI Content 0.6.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/od-ai-content\n"
-"POT-Creation-Date: 2026-07-30T10:39:46+00:00\n"
-"PO-Revision-Date: 2026-07-30 15:25+0900\n"
+"POT-Creation-Date: 2026-08-05T10:14:00+09:00\n"
+"PO-Revision-Date: 2026-08-05 10:14+0900\n"
 "Last-Translator: Olein Design\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -14,58 +14,9 @@ msgstr ""
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: od-ai-content\n"
 
-#. Plugin Name of the plugin
-#: od-ai-content.php includes/class-admin-diagnostics.php:128
-#: includes/class-admin-settings.php:114 includes/class-admin-settings.php:115
-#: includes/class-editor-settings.php:207
-msgid "OD AI Content"
-msgstr "OD AI Content"
-
-#. Description of the plugin
-#: od-ai-content.php
-msgid ""
-"Delivers WordPress content as Markdown that is easier for AI systems to "
-"retrieve and understand."
-msgstr ""
-"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
-
-#. Author of the plugin
-#: od-ai-content.php
-msgid "Olein Design"
-msgstr "Olein Design"
-
-#: includes/class-admin-diagnostics.php:169
+#: includes/class-admin-markdown.php:102
 msgid "View Markdown"
 msgstr "Markdownを表示"
-
-#: includes/class-admin-diagnostics.php:181
-msgid "Run OD AI Content diagnosis"
-msgstr "OD AI Contentの診断を実行"
-
-#: includes/class-admin-diagnostics.php:242
-msgid "The bulk diagnosis request could not be verified."
-msgstr "一括診断リクエストを確認できませんでした。"
-
-#. translators: 1: queued count, 2: skipped count.
-#: includes/class-admin-diagnostics.php:257
-#, php-format
-msgid "OD AI Content bulk diagnosis started — Queued: %1$d, Skipped: %2$d."
-msgstr "OD AI Content一括診断を開始しました — 受付：%1$d、対象外：%2$d。"
-
-#. translators: 1: completed count, 2: failed count.
-#: includes/class-admin-diagnostics.php:281
-#, php-format
-msgid "OD AI Content bulk diagnosis completed — Completed: %1$d, Failed: %2$d."
-msgstr "OD AI Content一括診断が完了しました — 完了：%1$d、失敗：%2$d。"
-
-#. translators: 1: waiting count, 2: processing count, 3: completed count, 4: failed count.
-#: includes/class-admin-diagnostics.php:304
-#, php-format
-msgid ""
-"OD AI Content bulk diagnosis — Waiting: %1$d, Processing: %2$d, Completed: "
-"%3$d, Failed: %4$d."
-msgstr ""
-"OD AI Content一括診断 — 待機中：%1$d、処理中：%2$d、完了：%3$d、失敗：%4$d。"
 
 #: includes/class-admin-settings.php:77
 msgid "Markdown output"
@@ -117,110 +68,6 @@ msgstr "埋め込みコンテンツ"
 msgid "Media"
 msgstr "メディア"
 
-#: includes/class-diagnostics-rest-controller.php:94
-msgid "Unique identifier for the post."
-msgstr "投稿の一意識別子。"
-
-#: includes/class-diagnostics-rest-controller.php:116
-msgid "The requested post was not found."
-msgstr "指定された投稿が見つかりませんでした。"
-
-#: includes/class-diagnostics-rest-controller.php:124
-msgid "This post type is not enabled for Markdown output."
-msgstr "この投稿タイプではMarkdown出力が有効になっていません。"
-
-#: includes/class-diagnostics-rest-controller.php:132
-msgid "You are not allowed to diagnose this post."
-msgstr "この投稿を診断する権限がありません。"
-
-#: includes/class-diagnostics.php:231
-msgid "Normal"
-msgstr "正常"
-
-#: includes/class-diagnostics.php:232 includes/class-editor-settings.php:212
-msgid "Warning"
-msgstr "注意"
-
-#: includes/class-diagnostics.php:233 includes/class-editor-settings.php:197
-msgid "Error"
-msgstr "エラー"
-
-#: includes/class-diagnostics.php:234
-msgid "Excluded"
-msgstr "除外"
-
-#: includes/class-diagnostics.php:235
-msgid "Not diagnosed"
-msgstr "未診断"
-
-#: includes/class-diagnostics.php:424
-msgid "The Markdown document was generated successfully."
-msgstr "Markdown文書を正常に生成できました。"
-
-#: includes/class-diagnostics.php:427
-msgid "The Markdown document could not be generated."
-msgstr "Markdown文書を生成できませんでした。"
-
-#: includes/class-diagnostics.php:430
-msgid "Required front matter is present."
-msgstr "必須のfront matterが含まれています。"
-
-#. translators: %s: comma-separated metadata field names.
-#: includes/class-diagnostics.php:435
-#, php-format
-msgid "Required front matter is missing: %s"
-msgstr "必須のfront matterが不足しています：%s"
-
-#: includes/class-diagnostics.php:440
-msgid "The document has one H1 matching the post title."
-msgstr "投稿タイトルと一致するH1が文書内に1つあります。"
-
-#: includes/class-diagnostics.php:443
-msgid "The document H1 is missing."
-msgstr "文書のH1がありません。"
-
-#: includes/class-diagnostics.php:446
-msgid "The document has more than one H1."
-msgstr "文書に複数のH1があります。"
-
-#: includes/class-diagnostics.php:449
-msgid "The document H1 does not match the post title."
-msgstr "文書のH1が投稿タイトルと一致しません。"
-
-#: includes/class-diagnostics.php:452
-msgid "The Markdown body contains content."
-msgstr "Markdown本文にコンテンツがあります。"
-
-#: includes/class-diagnostics.php:455
-msgid "The Markdown body is empty."
-msgstr "Markdown本文が空です。"
-
-#: includes/class-diagnostics.php:458
-msgid "The heading hierarchy has no level jumps."
-msgstr "見出し階層にレベル飛びはありません。"
-
-#. translators: %s: comma-separated heading level transitions, such as 2-4.
-#: includes/class-diagnostics.php:463
-#, php-format
-msgid "The heading hierarchy contains level jumps: %s"
-msgstr "見出し階層にレベル飛びがあります：%s"
-
-#. translators: %s: comma-separated WordPress block names.
-#: includes/class-diagnostics.php:470
-#, php-format
-msgid "Blocks excluded by the default conversion policy: %s"
-msgstr "デフォルトの変換方針によって除外されたブロック：%s"
-
-#. translators: %s: comma-separated WordPress block names.
-#: includes/class-diagnostics.php:477
-#, php-format
-msgid "Blocks converted through the unverified HTML fallback: %s"
-msgstr "未検証のHTMLフォールバックで変換されたブロック：%s"
-
-#: includes/class-diagnostics.php:482
-msgid "Unknown diagnostic result."
-msgstr "不明な診断結果です。"
-
 #: includes/class-editor-settings.php:75
 msgid "Whether this content is excluded from Markdown output."
 msgstr "このコンテンツをMarkdown出力から除外するかどうか。"
@@ -234,68 +81,73 @@ msgid "Short llms.txt description for this content."
 msgstr "このコンテンツのllms.txt用の短い説明。"
 
 #: includes/class-editor-settings.php:190
-msgid "The diagnosis could not be completed."
-msgstr "診断を完了できませんでした。"
-
-#: includes/class-editor-settings.php:192
-msgid "Diagnosis status"
-msgstr "診断結果"
-
-#: includes/class-editor-settings.php:193
-msgid "Markdown diagnosis"
-msgstr "Markdown診断"
-
-#: includes/class-editor-settings.php:194
 msgid ""
-"Unsaved changes are not included in the diagnosis. Save the post to update "
-"the result."
+"Unsaved changes are not included in the preview. Save the post before "
+"generating a new preview."
 msgstr ""
-"未保存の変更は診断に含まれません。投稿を保存すると診断結果を更新します。"
+"未保存の変更はプレビューに含まれません。新しいプレビューを生成する前に投稿を"
+"保存してください。"
 
-#: includes/class-editor-settings.php:195
+#: includes/class-editor-settings.php:191
 msgid "Short description"
 msgstr "短い説明"
 
-#: includes/class-editor-settings.php:198
+#: includes/class-editor-settings.php:193
 msgid "Exclude this content from Markdown output"
 msgstr "このコンテンツをMarkdown出力から除外"
 
-#: includes/class-editor-settings.php:200
-#: includes/class-editor-settings.php:201
-msgid "Information"
-msgstr "情報"
+#: includes/class-editor-settings.php:195
+msgid "Intentionally excluded blocks"
+msgstr "意図的に除外されたブロック"
 
-#: includes/class-editor-settings.php:202
-msgid "Items to review"
-msgstr "確認が必要な項目"
+#: includes/class-editor-settings.php:196
+msgid "Blocks using unverified HTML fallback"
+msgstr "未検証のHTMLフォールバックを使用するブロック"
 
-#: includes/class-editor-settings.php:204
+#: includes/class-editor-settings.php:198
 msgid "Include this content in llms.txt"
 msgstr "このコンテンツをllms.txtに含める"
 
-#: includes/class-editor-settings.php:206
-msgid "Passed"
-msgstr "正常"
+#: includes/class-editor-settings.php:201
+#: includes/class-markdown-preview-rest-controller.php:154
+msgid "The Markdown preview could not be generated."
+msgstr "Markdownプレビューを生成できませんでした。"
 
-#: includes/class-editor-settings.php:208
-msgid "Passed checks"
-msgstr "正常な項目"
-
-#: includes/class-editor-settings.php:209
+#: includes/class-editor-settings.php:202
 msgid "Markdown preview"
 msgstr "Markdownプレビュー"
 
-#: includes/class-editor-settings.php:210
-msgid "Run diagnosis again"
-msgstr "診断を再実行"
+#: includes/class-editor-settings.php:204
+msgid "Markdown preview and conversion report"
+msgstr "Markdownプレビューと変換レポート"
 
-#: includes/class-editor-settings.php:211
+#: includes/class-editor-settings.php:205
+msgid "Generate Markdown preview"
+msgstr "Markdownプレビューを生成"
+
+#: includes/class-editor-settings.php:206
 msgid "Open published Markdown"
 msgstr "公開中のMarkdownを開く"
 
 #: includes/class-llms-txt.php:132
 msgid "Content"
 msgstr "コンテンツ"
+
+#: includes/class-markdown-preview-rest-controller.php:94
+msgid "Unique identifier for the post."
+msgstr "投稿の一意識別子。"
+
+#: includes/class-markdown-preview-rest-controller.php:116
+msgid "The requested post was not found."
+msgstr "指定された投稿が見つかりませんでした。"
+
+#: includes/class-markdown-preview-rest-controller.php:124
+msgid "This post type is not enabled for Markdown output."
+msgstr "この投稿タイプではMarkdown出力が有効になっていません。"
+
+#: includes/class-markdown-preview-rest-controller.php:132
+msgid "You are not allowed to preview this post."
+msgstr "この投稿をプレビューする権限がありません。"
 
 #: includes/class-response-controller.php:165
 msgid "Markdown content not found."
@@ -305,5 +157,20 @@ msgstr "Markdownコンテンツが見つかりません。"
 msgid "You are not allowed to change OD AI Content settings."
 msgstr "OD AI Contentの設定を変更する権限がありません。"
 
-#~ msgid "Save the post before diagnosing to include the latest changes."
-#~ msgstr "最新の変更を診断へ反映するには、先に投稿を保存してください。"
+#. Description of the plugin
+#: od-ai-content.php
+msgid ""
+"Delivers WordPress content as Markdown that is easier for AI systems to "
+"retrieve and understand."
+msgstr ""
+"WordPressコンテンツを、AIが取得・理解しやすいMarkdownとして配信します。"
+
+#. Plugin Name of the plugin
+#: od-ai-content.php
+msgid "OD AI Content"
+msgstr "OD AI Content"
+
+#. Author of the plugin
+#: od-ai-content.php
+msgid "Olein Design"
+msgstr "Olein Design"
